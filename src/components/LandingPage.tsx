@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { usePoll } from '../context/PollContext';
 import { useTheme } from '../context/ThemeContext';
-import { useWorkspaceManager } from '../context/WorkspaceManagerContext';
 import WhyChoosePollVotePro from './WhyChoosePollVotePro';
 
 const LandingPage: React.FC = () => {
   const { setViewMode } = usePoll();
   const { state: themeState } = useTheme();
-  const { getCurrentWorkspace } = useWorkspaceManager();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {

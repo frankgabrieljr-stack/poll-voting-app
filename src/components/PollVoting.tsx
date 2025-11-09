@@ -68,7 +68,6 @@ const PollVoting: React.FC = () => {
 
   const getChoiceButtonClasses = (choiceId: string) => {
     const { theme, layout } = themeState.design;
-    const primaryColor = themeState.design.primaryColor;
     const isSelected = selectedChoice === choiceId;
     const hasVoted = state.hasVoted;
     
@@ -152,7 +151,7 @@ const PollVoting: React.FC = () => {
 
         {/* Choices */}
         <div className="space-y-4 mb-8">
-          {poll.choices.map((choice, index) => (
+          {poll.choices.map((choice) => (
             <button
               key={choice.id}
               onClick={() => handleVote(choice.id)}

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { Poll, Choice, ViewMode } from '../types/poll.types';
+import { Poll, ViewMode } from '../types/poll.types';
 
 // Helper function to save poll votes to storage
 const savePollVotes = (poll: Poll) => {

@@ -54,7 +54,6 @@ const DesignOptions: React.FC = () => {
 
   const getButtonClasses = (isActive: boolean) => {
     const { theme } = state.design;
-    const primaryColor = state.design.primaryColor;
     
     let baseClasses = 'px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ';
     

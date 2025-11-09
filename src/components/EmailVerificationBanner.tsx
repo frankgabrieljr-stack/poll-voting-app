@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { sendEmailVerification, User } from 'firebase/auth';
-import { auth } from '../config/firebase';
 
 interface EmailVerificationBannerProps {
   user: User;

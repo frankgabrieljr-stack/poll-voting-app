@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
-import { Workspace, WorkspaceSettings } from '../types/workspace.types';
+import { Workspace } from '../types/workspace.types';
 
 interface WorkspaceManagerState {
   workspaces: Workspace[];

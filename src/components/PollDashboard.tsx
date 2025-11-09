@@ -8,7 +8,7 @@ type SortOption = 'recent' | 'votes' | 'alphabetical';
 
 const PollDashboard: React.FC = () => {
   const { state: workspaceState, deletePoll, loadPolls } = useWorkspace();
-  const { createPoll, setViewMode, state: pollState } = usePoll();
+  const { createPoll, setViewMode } = usePoll();
   const { state: themeState } = useTheme();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');

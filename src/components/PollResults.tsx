@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { usePoll } from '../context/PollContext';
-import { useTheme } from '../context/ThemeContext';
 import { generatePollResults } from '../utils/exportUtils';
 
 const PollResults: React.FC = () => {
   const { state, setViewMode, resetPoll, resetVotingState } = usePoll();
-  const { state: themeState } = useTheme();
   const [showSuccessMessage, setShowSuccessMessage] = useState(true);
   const [autoAdvanceEnabled, setAutoAdvanceEnabled] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(3);
@@ -14,7 +12,6 @@ const PollResults: React.FC = () => {
   if (!poll) return null;
 
   const results = generatePollResults(poll);
-  const maxVotes = Math.max(...poll.choices.map(choice => choice.votes));
   const totalVotes = poll.choices.reduce((sum, choice) => sum + choice.votes, 0);
 
   const handleVoteAgain = () => {
@@ -164,7 +161,7 @@ const PollResults: React.FC = () => {
 
         {/* Results */}
         <div className="space-y-4 mb-8">
-          {poll.choices.map((choice, index) => {
+          {poll.choices.map((choice) => {
             const result = results.results.find(r => r.choice === choice.text);
             const percentage = result?.percentage || 0;
             const votes = choice.votes;
@@ -198,7 +195,7 @@ const PollResults: React.FC = () => {
         <div className="mb-8">
           <h3 className="text-xl font-bold mb-4 text-center text-white">Visual Breakdown</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {poll.choices.map((choice, index) => {
+            {poll.choices.map((choice) => {
               const result = results.results.find(r => r.choice === choice.text);
               const percentage = result?.percentage || 0;
               

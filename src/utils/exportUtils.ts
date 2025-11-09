@@ -1,4 +1,4 @@
-import { Poll, PollResults, ExportData } from '../types/poll.types';
+import { Poll, PollResults } from '../types/poll.types';
 
 export const generatePollResults = (poll: Poll): PollResults => {
   const totalVotes = poll.choices.reduce((sum, choice) => sum + choice.votes, 0);

@@ -64,7 +64,6 @@ const SavePollModal: React.FC<SavePollModalProps> = ({ isOpen, onClose, onSave }
 
   const getButtonClasses = () => {
     const { theme } = themeState.design;
-    const primaryColor = themeState.design.primaryColor;
     
     let baseClasses = 'px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ';
     

@@ -5,7 +5,7 @@ export interface Choice {
 }
 
 export interface DesignOptions {
-  theme: 'light' | 'dark' | 'colorful';
+  theme: 'light' | 'dark' | 'colorful' | 'designer';
   primaryColor: string;
   fontStyle: 'sans' | 'serif' | 'mono';
   layout: 'card' | 'list' | 'compact';

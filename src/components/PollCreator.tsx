@@ -122,10 +122,6 @@ const PollCreator: React.FC = () => {
     return baseClasses;
   };
 
-  const getButtonClasses = () => {
-    // Designer theme: Gradient buttons
-    return 'px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white hover:from-[#a366ff] hover:to-[#2ef9d8] focus:ring-[#8f4eff] shadow-lg';
-  };
 
   const getInputClasses = () => {
     // Designer theme: White/off-white inputs with violet borders
