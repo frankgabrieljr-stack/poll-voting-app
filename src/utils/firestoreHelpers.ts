@@ -278,10 +278,16 @@ export const sharePollWithUser = async (pollId: string, userId: string, email: s
 export const createWorkspaceInFirestore = async (workspace: Omit<Workspace, 'id'>, userId: string): Promise<string> => {
   try {
     const workspacesRef = collection(db, 'workspaces');
+    // Explicitly set only the fields we need for Firestore
+    // Note: ownerId and members are required for security rules
     const workspaceData = {
-      ...workspace,
-      ownerId: userId,
-      members: [userId],
+      name: workspace.name,
+      description: workspace.description || '',
+      color: workspace.color,
+      icon: workspace.icon,
+      pollCount: workspace.pollCount || 0,
+      ownerId: userId, // Required for security rules
+      members: [userId], // Array including the owner's UID
       createdAt: serverTimestamp(),
       lastModified: serverTimestamp(),
     };
