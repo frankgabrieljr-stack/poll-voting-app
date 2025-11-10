@@ -12,7 +12,7 @@ const PollDashboard: React.FC = () => {
   const { state: workspaceState, deletePoll, loadPolls } = useWorkspace();
   const { createPoll, setViewMode } = usePoll();
   const { state: themeState } = useTheme();
-  const { state: workspaceManagerState, setCurrentWorkspace, getCurrentWorkspace } = useWorkspaceManager();
+  const { state: workspaceManagerState, setCurrentWorkspace } = useWorkspaceManager();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');

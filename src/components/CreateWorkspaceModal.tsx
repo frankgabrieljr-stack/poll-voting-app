@@ -7,7 +7,7 @@ interface CreateWorkspaceModalProps {
 }
 
 const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onClose }) => {
-  const { createWorkspace, state } = useWorkspaceManager();
+  const { createWorkspace } = useWorkspaceManager();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [color, setColor] = useState('#8f4eff');

@@ -194,7 +194,7 @@ export const loadPollByIdFromFirestore = async (pollId: string): Promise<SavedPo
 /**
  * Update a poll in Firestore
  */
-export const updatePollInFirestore = async (poll: Poll, userId: string, workspaceId?: string, title?: string, description?: string): Promise<void> => {
+export const updatePollInFirestore = async (poll: Poll, userId: string, _workspaceId?: string, title?: string, description?: string): Promise<void> => {
   try {
     const pollRef = doc(db, 'polls', poll.id);
     
