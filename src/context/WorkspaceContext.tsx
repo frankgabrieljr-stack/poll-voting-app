@@ -1,21 +1,37 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import { Poll, SavedPoll } from '../types/poll.types';
+import { useAuth } from './AuthContext';
+import { useWorkspaceManager } from './WorkspaceManagerContext';
+import {
+  savePollToFirestore,
+  loadPollsFromFirestore,
+  loadSharedPollsFromFirestore,
+  updatePollInFirestore,
+  deletePollFromFirestore,
+  loadPollByIdFromFirestore,
+} from '../utils/firestoreHelpers';
 
 interface WorkspaceState {
   savedPolls: SavedPoll[];
+  sharedPolls: SavedPoll[];
   isLoading: boolean;
+  error: string | null;
 }
 
 type WorkspaceAction =
   | { type: 'LOAD_POLLS'; payload: SavedPoll[] }
+  | { type: 'LOAD_SHARED_POLLS'; payload: SavedPoll[] }
   | { type: 'SAVE_POLL'; payload: SavedPoll }
   | { type: 'UPDATE_POLL'; payload: SavedPoll }
   | { type: 'DELETE_POLL'; payload: string }
-  | { type: 'SET_LOADING'; payload: boolean };
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null };
 
 const initialState: WorkspaceState = {
   savedPolls: [],
+  sharedPolls: [],
   isLoading: false,
+  error: null,
 };
 
 const workspaceReducer = (state: WorkspaceState, action: WorkspaceAction): WorkspaceState => {
@@ -25,11 +41,18 @@ const workspaceReducer = (state: WorkspaceState, action: WorkspaceAction): Works
         ...state,
         savedPolls: action.payload,
         isLoading: false,
+        error: null,
+      };
+    case 'LOAD_SHARED_POLLS':
+      return {
+        ...state,
+        sharedPolls: action.payload,
       };
     case 'SAVE_POLL':
       return {
         ...state,
         savedPolls: [...state.savedPolls, action.payload],
+        error: null,
       };
     case 'UPDATE_POLL':
       return {
@@ -37,16 +60,23 @@ const workspaceReducer = (state: WorkspaceState, action: WorkspaceAction): Works
         savedPolls: state.savedPolls.map(poll =>
           poll.id === action.payload.id ? action.payload : poll
         ),
+        error: null,
       };
     case 'DELETE_POLL':
       return {
         ...state,
         savedPolls: state.savedPolls.filter(poll => poll.id !== action.payload),
+        error: null,
       };
     case 'SET_LOADING':
       return {
         ...state,
         isLoading: action.payload,
+      };
+    case 'SET_ERROR':
+      return {
+        ...state,
+        error: action.payload,
       };
     default:
       return state;
@@ -55,167 +85,213 @@ const workspaceReducer = (state: WorkspaceState, action: WorkspaceAction): Works
 
 interface WorkspaceContextType {
   state: WorkspaceState;
-  savePoll: (poll: Poll, title?: string, description?: string) => void;
-  updatePoll: (poll: Poll, title?: string, description?: string) => void;
-  deletePoll: (pollId: string) => void;
-  loadPoll: (pollId: string) => Poll | null;
-  loadPolls: () => void;
+  savePoll: (poll: Poll, title?: string, description?: string) => Promise<void>;
+  updatePoll: (poll: Poll, title?: string, description?: string) => Promise<void>;
+  deletePoll: (pollId: string) => Promise<void>;
+  loadPoll: (pollId: string) => Promise<Poll | null>;
+  loadPolls: () => Promise<void>;
+  loadSharedPolls: () => Promise<void>;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
 export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(workspaceReducer, initialState);
+  const { currentUser } = useAuth();
+  const { getCurrentWorkspace } = useWorkspaceManager();
 
-  // Load polls from localStorage on mount
+  // Load polls when user logs in or workspace changes
   useEffect(() => {
-    loadPolls();
-  }, []);
+    if (currentUser) {
+      loadPolls();
+      loadSharedPolls();
+    } else {
+      // Clear polls when user logs out
+      dispatch({ type: 'LOAD_POLLS', payload: [] });
+      dispatch({ type: 'LOAD_SHARED_POLLS', payload: [] });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
 
-  const loadPolls = () => {
+  // Reload polls when workspace changes
+  const currentWorkspace = getCurrentWorkspace();
+  useEffect(() => {
+    if (currentUser && currentWorkspace) {
+      loadPolls();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentWorkspace?.id]);
+
+  const loadPolls = async () => {
+    if (!currentUser) {
+      dispatch({ type: 'LOAD_POLLS', payload: [] });
+      return;
+    }
+
     dispatch({ type: 'SET_LOADING', payload: true });
-    
-    // Add timeout to prevent infinite loading
-    const timeout = setTimeout(() => {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }, 3000);
-    
+    dispatch({ type: 'SET_ERROR', payload: null });
+
     try {
-      const savedPollsData = localStorage.getItem('poll-workspace');
-      if (savedPollsData) {
-        const polls = JSON.parse(savedPollsData);
-        // Convert date strings back to Date objects
-        const pollsWithDates = polls.map((poll: SavedPoll) => ({
-          ...poll,
-          createdAt: new Date(poll.createdAt),
-          lastModified: new Date(poll.lastModified),
-        }));
-        clearTimeout(timeout);
-        dispatch({ type: 'LOAD_POLLS', payload: pollsWithDates });
-      } else {
-        clearTimeout(timeout);
-        dispatch({ type: 'LOAD_POLLS', payload: [] });
-      }
-    } catch (error) {
-      clearTimeout(timeout);
+      const workspace = getCurrentWorkspace();
+      const workspaceId = workspace?.id;
+      const polls = await loadPollsFromFirestore(currentUser.uid, workspaceId);
+      dispatch({ type: 'LOAD_POLLS', payload: polls });
+    } catch (error: any) {
       console.error('Failed to load polls:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to load polls' });
       dispatch({ type: 'LOAD_POLLS', payload: [] });
     }
   };
 
-  const savePoll = (poll: Poll, title?: string, description?: string) => {
-    const savedPoll: SavedPoll = {
-      id: poll.id,
-      title: title || `Poll: ${poll.question.substring(0, 30)}${poll.question.length > 30 ? '...' : ''}`,
-      description,
-      question: poll.question,
-      choices: poll.choices, // Store full choices with votes
-      createdAt: poll.createdAt,
-      lastModified: new Date(),
-      totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
-      design: poll.design,
-      backgroundImage: poll.design.backgroundImage, // Store background image
-    };
+  const loadSharedPolls = async () => {
+    if (!currentUser?.email) {
+      return;
+    }
 
-    // Save to localStorage with error handling
     try {
-      const existingPolls = JSON.parse(localStorage.getItem('poll-workspace') || '[]');
+      const sharedPolls = await loadSharedPollsFromFirestore(currentUser.email);
+      dispatch({ type: 'LOAD_SHARED_POLLS', payload: sharedPolls });
+    } catch (error) {
+      console.error('Failed to load shared polls:', error);
+    }
+  };
+
+  const savePoll = async (poll: Poll, title?: string, description?: string): Promise<void> => {
+    if (!currentUser) {
+      throw new Error('You must be logged in to save polls');
+    }
+
+    dispatch({ type: 'SET_ERROR', payload: null });
+
+    try {
+      const workspace = getCurrentWorkspace();
+      const workspaceId = workspace?.id;
       
+      await savePollToFirestore(poll, currentUser.uid, workspaceId, title, description);
+      
+      const savedPoll: SavedPoll = {
+        id: poll.id,
+        title: title || `Poll: ${poll.question.substring(0, 30)}${poll.question.length > 30 ? '...' : ''}`,
+        description,
+        question: poll.question,
+        choices: poll.choices,
+        createdAt: poll.createdAt,
+        lastModified: new Date(),
+        totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
+        design: poll.design,
+        backgroundImage: poll.design?.backgroundImage,
+        userId: currentUser.uid,
+        sharedWith: poll.sharedWith || [],
+        permissions: poll.permissions || {},
+      };
+
       // Check if poll already exists (update) or is new (add)
-      const existingIndex = existingPolls.findIndex((p: SavedPoll) => p.id === poll.id);
-      let updatedPolls;
-      
-      if (existingIndex >= 0) {
-        // Update existing poll
-        updatedPolls = [...existingPolls];
-        updatedPolls[existingIndex] = savedPoll;
-      } else {
-        // Add new poll
-        updatedPolls = [...existingPolls, savedPoll];
-      }
-      
-      localStorage.setItem('poll-workspace', JSON.stringify(updatedPolls));
-      
+      const existingIndex = state.savedPolls.findIndex(p => p.id === poll.id);
       if (existingIndex >= 0) {
         dispatch({ type: 'UPDATE_POLL', payload: savedPoll });
       } else {
         dispatch({ type: 'SAVE_POLL', payload: savedPoll });
       }
-    } catch (error) {
-      // Handle localStorage quota exceeded
-      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-        console.error('Storage quota exceeded. Please delete some polls.');
-        throw new Error('Unable to save poll. Storage is full. Please delete some polls and try again.');
-      } else {
-        console.error('Failed to save poll:', error);
-        throw new Error('Unable to save poll. Please try again.');
-      }
+    } catch (error: any) {
+      console.error('Failed to save poll:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to save poll' });
+      throw error;
     }
   };
 
-  const updatePoll = (poll: Poll, title?: string, description?: string) => {
-    const savedPoll: SavedPoll = {
-      id: poll.id,
-      title: title || `Poll: ${poll.question.substring(0, 30)}${poll.question.length > 30 ? '...' : ''}`,
-      description,
-      question: poll.question,
-      choices: poll.choices, // Store full choices with votes
-      createdAt: poll.createdAt,
-      lastModified: new Date(),
-      totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
-      design: poll.design,
-      backgroundImage: poll.design.backgroundImage, // Store background image
-    };
+  const updatePoll = async (poll: Poll, title?: string, description?: string): Promise<void> => {
+    if (!currentUser) {
+      throw new Error('You must be logged in to update polls');
+    }
+
+    dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
-      const existingPolls = JSON.parse(localStorage.getItem('poll-workspace') || '[]');
-      const updatedPolls = existingPolls.map((p: SavedPoll) => 
-        p.id === poll.id ? savedPoll : p
-      );
-      localStorage.setItem('poll-workspace', JSON.stringify(updatedPolls));
+      const workspace = getCurrentWorkspace();
+      const workspaceId = workspace?.id;
       
+      await updatePollInFirestore(poll, currentUser.uid, workspaceId, title, description);
+      
+      const savedPoll: SavedPoll = {
+        id: poll.id,
+        title: title || poll.id,
+        description,
+        question: poll.question,
+        choices: poll.choices,
+        createdAt: poll.createdAt,
+        lastModified: new Date(),
+        totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
+        design: poll.design,
+        backgroundImage: poll.design?.backgroundImage,
+        userId: currentUser.uid,
+        sharedWith: poll.sharedWith || [],
+        permissions: poll.permissions || {},
+      };
+
       dispatch({ type: 'UPDATE_POLL', payload: savedPoll });
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-        console.error('Storage quota exceeded.');
-        throw new Error('Unable to update poll. Storage is full. Please delete some polls and try again.');
-      } else {
-        console.error('Failed to update poll:', error);
-        throw new Error('Unable to update poll. Please try again.');
-      }
+    } catch (error: any) {
+      console.error('Failed to update poll:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to update poll' });
+      throw error;
     }
   };
 
-  const deletePoll = (pollId: string) => {
+  const deletePoll = async (pollId: string): Promise<void> => {
+    if (!currentUser) {
+      throw new Error('You must be logged in to delete polls');
+    }
+
+    dispatch({ type: 'SET_ERROR', payload: null });
+
     try {
-      const existingPolls = JSON.parse(localStorage.getItem('poll-workspace') || '[]');
-      const updatedPolls = existingPolls.filter((p: SavedPoll) => p.id !== pollId);
-      localStorage.setItem('poll-workspace', JSON.stringify(updatedPolls));
-      
+      await deletePollFromFirestore(pollId, currentUser.uid);
       dispatch({ type: 'DELETE_POLL', payload: pollId });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to delete poll:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to delete poll' });
+      throw error;
     }
   };
 
-  const loadPoll = (pollId: string): Poll | null => {
+  const loadPoll = async (pollId: string): Promise<Poll | null> => {
     try {
-      const existingPolls = JSON.parse(localStorage.getItem('poll-workspace') || '[]');
-      const savedPoll = existingPolls.find((p: SavedPoll) => p.id === pollId);
+      // First try to load from Firestore
+      const savedPoll = await loadPollByIdFromFirestore(pollId);
       
       if (savedPoll) {
-        // Convert SavedPoll back to Poll format with full data
         return {
           id: savedPoll.id,
           question: savedPoll.question,
-          choices: savedPoll.choices || [], // Use stored choices with votes
-          createdAt: new Date(savedPoll.createdAt),
+          choices: savedPoll.choices || [],
+          createdAt: savedPoll.createdAt,
           design: {
             ...savedPoll.design,
-            backgroundImage: savedPoll.backgroundImage, // Include background image
+            backgroundImage: savedPoll.backgroundImage,
           },
+          userId: savedPoll.userId,
+          sharedWith: savedPoll.sharedWith,
+          permissions: savedPoll.permissions,
         };
       }
+      
+      // Fallback to local state
+      const localPoll = state.savedPolls.find(p => p.id === pollId);
+      if (localPoll) {
+        return {
+          id: localPoll.id,
+          question: localPoll.question,
+          choices: localPoll.choices || [],
+          createdAt: localPoll.createdAt,
+          design: {
+            ...localPoll.design,
+            backgroundImage: localPoll.backgroundImage,
+          },
+          userId: localPoll.userId,
+          sharedWith: localPoll.sharedWith,
+          permissions: localPoll.permissions,
+        };
+      }
+      
       return null;
     } catch (error) {
       console.error('Failed to load poll:', error);
@@ -232,6 +308,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
         deletePoll,
         loadPoll,
         loadPolls,
+        loadSharedPolls,
       }}
     >
       {children}
@@ -246,7 +323,3 @@ export const useWorkspace = () => {
   }
   return context;
 };
-
-
-
-

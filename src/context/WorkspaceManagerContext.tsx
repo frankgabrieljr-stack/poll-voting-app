@@ -1,10 +1,18 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import { Workspace } from '../types/workspace.types';
+import { useAuth } from './AuthContext';
+import {
+  createWorkspaceInFirestore,
+  loadWorkspacesFromFirestore,
+  updateWorkspaceInFirestore,
+  deleteWorkspaceFromFirestore,
+} from '../utils/firestoreHelpers';
 
 interface WorkspaceManagerState {
   workspaces: Workspace[];
   currentWorkspaceId: string | null;
   isLoading: boolean;
+  error: string | null;
 }
 
 type WorkspaceManagerAction =
@@ -13,12 +21,14 @@ type WorkspaceManagerAction =
   | { type: 'UPDATE_WORKSPACE'; payload: Workspace }
   | { type: 'DELETE_WORKSPACE'; payload: string }
   | { type: 'SET_CURRENT_WORKSPACE'; payload: string }
-  | { type: 'SET_LOADING'; payload: boolean };
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null };
 
 const initialState: WorkspaceManagerState = {
   workspaces: [],
   currentWorkspaceId: null,
   isLoading: false,
+  error: null,
 };
 
 const workspaceManagerReducer = (state: WorkspaceManagerState, action: WorkspaceManagerAction): WorkspaceManagerState => {
@@ -28,11 +38,14 @@ const workspaceManagerReducer = (state: WorkspaceManagerState, action: Workspace
         ...state,
         workspaces: action.payload,
         isLoading: false,
+        error: null,
       };
     case 'CREATE_WORKSPACE':
       return {
         ...state,
         workspaces: [...state.workspaces, action.payload],
+        currentWorkspaceId: action.payload.id,
+        error: null,
       };
     case 'UPDATE_WORKSPACE':
       return {
@@ -40,12 +53,14 @@ const workspaceManagerReducer = (state: WorkspaceManagerState, action: Workspace
         workspaces: state.workspaces.map(workspace =>
           workspace.id === action.payload.id ? action.payload : workspace
         ),
+        error: null,
       };
     case 'DELETE_WORKSPACE':
       return {
         ...state,
         workspaces: state.workspaces.filter(workspace => workspace.id !== action.payload),
         currentWorkspaceId: state.currentWorkspaceId === action.payload ? null : state.currentWorkspaceId,
+        error: null,
       };
     case 'SET_CURRENT_WORKSPACE':
       return {
@@ -57,6 +72,11 @@ const workspaceManagerReducer = (state: WorkspaceManagerState, action: Workspace
         ...state,
         isLoading: action.payload,
       };
+    case 'SET_ERROR':
+      return {
+        ...state,
+        error: action.payload,
+      };
     default:
       return state;
   }
@@ -64,114 +84,150 @@ const workspaceManagerReducer = (state: WorkspaceManagerState, action: Workspace
 
 interface WorkspaceManagerContextType {
   state: WorkspaceManagerState;
-  createWorkspace: (name: string, description?: string, color?: string, icon?: string) => void;
-  updateWorkspace: (workspace: Workspace) => void;
-  deleteWorkspace: (workspaceId: string) => void;
+  createWorkspace: (name: string, description?: string, color?: string, icon?: string) => Promise<void>;
+  updateWorkspace: (workspace: Workspace) => Promise<void>;
+  deleteWorkspace: (workspaceId: string) => Promise<void>;
   setCurrentWorkspace: (workspaceId: string) => void;
   getCurrentWorkspace: () => Workspace | null;
-  loadWorkspaces: () => void;
+  loadWorkspaces: () => Promise<void>;
 }
 
 const WorkspaceManagerContext = createContext<WorkspaceManagerContextType | undefined>(undefined);
 
 export const WorkspaceManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(workspaceManagerReducer, initialState);
+  const { currentUser } = useAuth();
 
-  // Load workspaces from localStorage on mount
+  // Load workspaces when user logs in
   useEffect(() => {
-    loadWorkspaces();
-  }, []);
+    if (currentUser) {
+      loadWorkspaces();
+    } else {
+      // Clear workspaces when user logs out
+      dispatch({ type: 'LOAD_WORKSPACES', payload: [] });
+      dispatch({ type: 'SET_CURRENT_WORKSPACE', payload: '' });
+    }
+  }, [currentUser]);
 
-  const loadWorkspaces = () => {
+  const loadWorkspaces = async () => {
+    if (!currentUser) {
+      dispatch({ type: 'LOAD_WORKSPACES', payload: [] });
+      return;
+    }
+
     dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
+
     try {
-      const workspacesData = localStorage.getItem('poll-workspaces');
-      if (workspacesData) {
-        const workspaces = JSON.parse(workspacesData);
+      const workspaces = await loadWorkspacesFromFirestore(currentUser.uid);
+      
+      if (workspaces.length === 0) {
+        // Create default workspace if none exist
+        await createDefaultWorkspace();
+      } else {
         dispatch({ type: 'LOAD_WORKSPACES', payload: workspaces });
         
         // Set first workspace as current if none is selected
-        if (workspaces.length > 0 && !state.currentWorkspaceId) {
+        if (!state.currentWorkspaceId && workspaces.length > 0) {
           dispatch({ type: 'SET_CURRENT_WORKSPACE', payload: workspaces[0].id });
         }
-      } else {
-        // Create default workspace if none exist
-        createDefaultWorkspace();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to load workspaces:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to load workspaces' });
       dispatch({ type: 'LOAD_WORKSPACES', payload: [] });
     }
   };
 
-  const createDefaultWorkspace = () => {
-    const defaultWorkspace: Workspace = {
-      id: 'default-workspace',
-      name: 'My Polls',
-      description: 'Default workspace for your polls',
-      color: '#3b82f6',
-      icon: '📊',
-      createdAt: new Date(),
-      lastModified: new Date(),
-      pollCount: 0,
-    };
-    
+  const createDefaultWorkspace = async () => {
+    if (!currentUser) return;
+
     try {
-      localStorage.setItem('poll-workspaces', JSON.stringify([defaultWorkspace]));
-      dispatch({ type: 'LOAD_WORKSPACES', payload: [defaultWorkspace] });
-      dispatch({ type: 'SET_CURRENT_WORKSPACE', payload: defaultWorkspace.id });
+      const defaultWorkspace: Omit<Workspace, 'id'> = {
+        name: 'My Polls',
+        description: 'Default workspace for your polls',
+        color: '#8f4eff',
+        icon: '📊',
+        createdAt: new Date(),
+        lastModified: new Date(),
+        pollCount: 0,
+      };
+
+      const workspaceId = await createWorkspaceInFirestore(defaultWorkspace, currentUser.uid);
+      const newWorkspace: Workspace = {
+        ...defaultWorkspace,
+        id: workspaceId,
+      };
+
+      dispatch({ type: 'CREATE_WORKSPACE', payload: newWorkspace });
     } catch (error) {
       console.error('Failed to create default workspace:', error);
     }
   };
 
-  const createWorkspace = (name: string, description?: string, color?: string, icon?: string) => {
-    const workspace: Workspace = {
-      id: `workspace-${Date.now()}`,
-      name,
-      description,
-      color: color || '#3b82f6',
-      icon: icon || '📊',
-      createdAt: new Date(),
-      lastModified: new Date(),
-      pollCount: 0,
-    };
+  const createWorkspace = async (name: string, description?: string, color?: string, icon?: string): Promise<void> => {
+    if (!currentUser) {
+      throw new Error('You must be logged in to create workspaces');
+    }
+
+    dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
-      const existingWorkspaces = JSON.parse(localStorage.getItem('poll-workspaces') || '[]');
-      const updatedWorkspaces = [...existingWorkspaces, workspace];
-      localStorage.setItem('poll-workspaces', JSON.stringify(updatedWorkspaces));
-      
-      dispatch({ type: 'CREATE_WORKSPACE', payload: workspace });
-      dispatch({ type: 'SET_CURRENT_WORKSPACE', payload: workspace.id });
-    } catch (error) {
+      const workspace: Omit<Workspace, 'id'> = {
+        name,
+        description,
+        color: color || '#8f4eff',
+        icon: icon || '📊',
+        createdAt: new Date(),
+        lastModified: new Date(),
+        pollCount: 0,
+      };
+
+      const workspaceId = await createWorkspaceInFirestore(workspace, currentUser.uid);
+      const newWorkspace: Workspace = {
+        ...workspace,
+        id: workspaceId,
+      };
+
+      dispatch({ type: 'CREATE_WORKSPACE', payload: newWorkspace });
+    } catch (error: any) {
       console.error('Failed to create workspace:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to create workspace' });
+      throw error;
     }
   };
 
-  const updateWorkspace = (workspace: Workspace) => {
+  const updateWorkspace = async (workspace: Workspace): Promise<void> => {
+    if (!currentUser) {
+      throw new Error('You must be logged in to update workspaces');
+    }
+
+    dispatch({ type: 'SET_ERROR', payload: null });
+
     try {
-      const existingWorkspaces = JSON.parse(localStorage.getItem('poll-workspaces') || '[]');
-      const updatedWorkspaces = existingWorkspaces.map((w: Workspace) => 
-        w.id === workspace.id ? { ...workspace, lastModified: new Date() } : w
-      );
-      localStorage.setItem('poll-workspaces', JSON.stringify(updatedWorkspaces));
-      
+      await updateWorkspaceInFirestore(workspace.id, workspace, currentUser.uid);
       dispatch({ type: 'UPDATE_WORKSPACE', payload: { ...workspace, lastModified: new Date() } });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update workspace:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to update workspace' });
+      throw error;
     }
   };
 
-  const deleteWorkspace = (workspaceId: string) => {
+  const deleteWorkspace = async (workspaceId: string): Promise<void> => {
+    if (!currentUser) {
+      throw new Error('You must be logged in to delete workspaces');
+    }
+
+    dispatch({ type: 'SET_ERROR', payload: null });
+
     try {
-      const existingWorkspaces = JSON.parse(localStorage.getItem('poll-workspaces') || '[]');
-      const updatedWorkspaces = existingWorkspaces.filter((w: Workspace) => w.id !== workspaceId);
-      localStorage.setItem('poll-workspaces', JSON.stringify(updatedWorkspaces));
-      
+      await deleteWorkspaceFromFirestore(workspaceId, currentUser.uid);
       dispatch({ type: 'DELETE_WORKSPACE', payload: workspaceId });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to delete workspace:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to delete workspace' });
+      throw error;
     }
   };
 
@@ -207,7 +263,3 @@ export const useWorkspaceManager = () => {
   }
   return context;
 };
-
-
-
-

@@ -39,7 +39,7 @@ const PollCreator: React.FC = () => {
     setChoices(newChoices);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Check if user's email is verified (optional restriction)
@@ -86,15 +86,17 @@ const PollCreator: React.FC = () => {
       backgroundImage: poll.design.backgroundImage || 'No background image',
     });
 
-    // Auto-save poll to storage when created
-    try {
-      savePoll(poll);
-      console.log('Poll auto-saved to storage');
-    } catch (error: any) {
-      console.error('Failed to auto-save poll:', error);
-      // Show user-friendly error message
-      alert(error.message || 'Unable to save poll. Please try again.');
-      // Continue even if auto-save fails - poll will still be created
+    // Auto-save poll to Firestore when created
+    if (currentUser) {
+      try {
+        await savePoll(poll);
+        console.log('Poll auto-saved to Firestore');
+      } catch (error: any) {
+        console.error('Failed to auto-save poll:', error);
+        // Show user-friendly error message
+        alert(error.message || 'Unable to save poll. Please try again.');
+        // Continue even if auto-save fails - poll will still be created
+      }
     }
 
     createPoll(poll);

@@ -27,7 +27,10 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
     };
 
     if (showUserMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Use a small timeout to ensure the click event is registered
+      setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+      }, 0);
     }
 
     return () => {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { PollProvider } from './context/PollContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { WorkspaceProvider } from './context/WorkspaceContext';
@@ -15,6 +15,7 @@ import Register from './components/Register';
 import ProtectedRoute from './components/ProtectedRoute';
 import EmailVerificationBanner from './components/EmailVerificationBanner';
 import Navigation from './components/Navigation';
+import SharedPollView from './components/SharedPollView';
 import { usePoll } from './context/PollContext';
 import { useTheme } from './context/ThemeContext';
 
@@ -26,10 +27,28 @@ const MemoizedPollVoting = React.memo(PollVoting);
 const MemoizedPollResults = React.memo(PollResults);
 
 const AppContent: React.FC = () => {
-  const { state } = usePoll();
+  const { state, setViewMode } = usePoll();
   const { state: themeState } = useTheme();
   const { currentUser, loading: authLoading } = useAuth();
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [sharedPollId, setSharedPollId] = useState<string | null>(null);
+
+  // Check for poll ID in URL (for sharing)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const pollParam = urlParams.get('poll');
+    const pathPollId = window.location.pathname.split('/poll/')[1];
+    
+    if (pollParam) {
+      setSharedPollId(pollParam);
+      setViewMode('shared-poll');
+    } else if (pathPollId) {
+      setSharedPollId(pathPollId);
+      setViewMode('shared-poll');
+    } else {
+      setSharedPollId(null);
+    }
+  }, [setViewMode]);
 
   // Memoize theme classes to prevent recalculation
   const themeClasses = useMemo(() => {
@@ -71,6 +90,11 @@ const AppContent: React.FC = () => {
 
   // Memoize current view to prevent unnecessary re-renders
   const currentView = useMemo(() => {
+    // Handle shared poll view
+    if (state.viewMode === 'shared-poll' && sharedPollId) {
+      return <SharedPollView pollId={sharedPollId} />;
+    }
+
     switch (state.viewMode) {
       case 'login':
         return <MemoizedLogin />;
@@ -119,7 +143,7 @@ const AppContent: React.FC = () => {
       default:
         return <MemoizedLandingPage />;
     }
-  }, [state.viewMode]);
+  }, [state.viewMode, sharedPollId]);
   
   // Memoize save modal handlers to prevent recreation
   const handleSaveClick = useCallback(() => {

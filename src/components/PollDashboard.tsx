@@ -2,7 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { useWorkspace } from '../context/WorkspaceContext';
 import { usePoll } from '../context/PollContext';
 import { useTheme } from '../context/ThemeContext';
+import { useWorkspaceManager } from '../context/WorkspaceManagerContext';
 import { SavedPoll } from '../types/poll.types';
+import CreateWorkspaceModal from './CreateWorkspaceModal';
 
 type SortOption = 'recent' | 'votes' | 'alphabetical';
 
@@ -10,7 +12,9 @@ const PollDashboard: React.FC = () => {
   const { state: workspaceState, deletePoll, loadPolls } = useWorkspace();
   const { createPoll, setViewMode } = usePoll();
   const { state: themeState } = useTheme();
+  const { state: workspaceManagerState, setCurrentWorkspace, getCurrentWorkspace } = useWorkspaceManager();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showCreateWorkspace, setShowCreateWorkspace] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('recent');
 
@@ -104,10 +108,10 @@ const PollDashboard: React.FC = () => {
   };
 
   const handleSharePoll = async (pollId: string) => {
-    const shareUrl = `${window.location.origin}?poll=${pollId}`;
+    const shareUrl = `${window.location.origin}/poll/${pollId}`;
     try {
       await navigator.clipboard.writeText(shareUrl);
-      alert('Poll link copied to clipboard!');
+      alert('Poll link copied to clipboard! Share this link with others to let them vote.');
     } catch (error) {
       // Fallback for browsers that don't support clipboard API
       const textArea = document.createElement('textarea');
@@ -116,13 +120,13 @@ const PollDashboard: React.FC = () => {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      alert('Poll link copied to clipboard!');
+      alert('Poll link copied to clipboard! Share this link with others to let them vote.');
     }
   };
 
-  const handleDeletePoll = (pollId: string) => {
+  const handleDeletePoll = async (pollId: string) => {
     try {
-      deletePoll(pollId);
+      await deletePoll(pollId);
       setShowDeleteConfirm(null);
     } catch (error: any) {
       alert(error.message || 'Unable to delete poll. Please try again.');
@@ -151,7 +155,7 @@ const PollDashboard: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
           <button
             onClick={() => setViewMode('create')}
             className="px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 text-white shadow-xl bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8]"
@@ -160,6 +164,17 @@ const PollDashboard: React.FC = () => {
             <span className="flex items-center justify-center space-x-2">
               <span>➕</span>
               <span>Create New Poll</span>
+            </span>
+          </button>
+          
+          <button
+            onClick={() => setShowCreateWorkspace(true)}
+            className="px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] border border-[#8f4eff]/20 text-[#1a1a2e] shadow-lg"
+            title="Create a new workspace"
+          >
+            <span className="flex items-center justify-center space-x-2">
+              <span>📁</span>
+              <span>New Workspace</span>
             </span>
           </button>
           
@@ -174,6 +189,60 @@ const PollDashboard: React.FC = () => {
             </span>
           </button>
         </div>
+
+        {/* Workspace Selector */}
+        {workspaceManagerState.workspaces.length > 1 && (
+          <div className="mb-6 bg-[#fafaff] rounded-xl p-4 shadow-lg border border-[#8f4eff]/10">
+            <label className="block text-sm font-bold text-[#1a1a2e] mb-2">Current Workspace:</label>
+            <select
+              value={workspaceManagerState.currentWorkspaceId || ''}
+              onChange={(e) => setCurrentWorkspace(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border-2 border-[#8f4eff]/20 focus:outline-none focus:ring-2 focus:ring-[#8f4eff] focus:border-[#8f4eff] text-[#1a1a2e] font-semibold bg-[#fafaff]"
+            >
+              {workspaceManagerState.workspaces.map((workspace) => (
+                <option key={workspace.id} value={workspace.id}>
+                  {workspace.icon} {workspace.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Shared Polls Section */}
+        {workspaceState.sharedPolls.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-4 text-white">Shared with Me</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+              {workspaceState.sharedPolls.map((poll) => (
+                <div key={poll.id} className={getCardClasses()}>
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold mb-2 text-[#1a1a2e] line-clamp-2">
+                      {poll.title || 'Untitled Poll'}
+                    </h3>
+                    <p className="text-base font-semibold mb-3 text-[#1a1a2e] line-clamp-2">
+                      "{poll.question}"
+                    </p>
+                  </div>
+                  
+                  <div className="mb-4 text-sm text-[#4a4a6a] space-y-1">
+                    <p className="font-medium">📊 Votes: {poll.totalVotes || 0}</p>
+                    <p className="font-medium">🎯 Choices: {poll.choices?.length || 0}</p>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => handleLoadPoll(poll)}
+                      className="px-4 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 text-white shadow-lg text-sm bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8]"
+                      title="Open this poll to vote"
+                    >
+                      🚀 Open Poll
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Search and Sort Controls */}
         {workspaceState.savedPolls.length > 0 && (
@@ -339,6 +408,12 @@ const PollDashboard: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Create Workspace Modal */}
+        <CreateWorkspaceModal
+          isOpen={showCreateWorkspace}
+          onClose={() => setShowCreateWorkspace(false)}
+        />
       </div>
     </div>
   );
