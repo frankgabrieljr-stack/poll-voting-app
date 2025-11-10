@@ -89,14 +89,25 @@ const PollCreator: React.FC = () => {
     // Auto-save poll to Firestore when created
     if (currentUser) {
       try {
+        console.log('Attempting to save poll to Firestore...', {
+          pollId: poll.id,
+          userId: currentUser.uid,
+          question: poll.question,
+        });
         await savePoll(poll);
-        console.log('Poll auto-saved to Firestore');
+        console.log('✅ Poll successfully saved to Firestore');
       } catch (error: any) {
-        console.error('Failed to auto-save poll:', error);
-        // Show user-friendly error message
-        alert(error.message || 'Unable to save poll. Please try again.');
-        // Continue even if auto-save fails - poll will still be created
+        console.error('❌ Failed to auto-save poll:', error);
+        // Show user-friendly error message and prevent poll creation if save fails
+        const errorMessage = error.message || 'Unable to save poll. Please try again.';
+        alert(`Error saving poll: ${errorMessage}\n\nPlease check:\n1. You are logged in\n2. Firestore security rules allow poll creation\n3. Your internet connection is working`);
+        // Don't continue if save fails - poll won't be created
+        return;
       }
+    } else {
+      console.warn('⚠️ No user logged in - poll will not be saved to Firestore');
+      alert('You must be logged in to save polls. Please log in and try again.');
+      return;
     }
 
     createPoll(poll);
@@ -127,7 +138,7 @@ const PollCreator: React.FC = () => {
 
   const getInputClasses = () => {
     // Designer theme: White/off-white inputs with violet borders
-    return 'w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 text-base bg-[#fafaff] border-[#8f4eff]/20 text-[#1a1a2e] placeholder-[#4a4a6a] focus:border-[#8f4eff] focus:ring-[#8f4eff] shadow-md';
+    return 'w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 text-base bg-[#fafaff] border-[#8f4eff]/20 text-[#1a1a2e] placeholder-[#6a6a8a] focus:border-[#8f4eff] focus:ring-[#8f4eff] shadow-md';
   };
 
   const handleTemplateSelect = (template: typeof designTemplates[0]) => {
@@ -292,19 +303,20 @@ const PollCreator: React.FC = () => {
             <label htmlFor="question" className="block text-lg md:text-xl font-bold mb-3 text-white">
               Poll Question
             </label>
-            <input
-              type="text"
-              id="question"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="What would you like to ask?"
-              className={getInputClasses()}
-              style={{ 
-                borderColor: themeState.design.primaryColor,
-                color: '#1a1a1a',
-                fontSize: '16px'
-              }}
-            />
+                        <input
+                          type="text"
+                          id="question"
+                          value={question}
+                          onChange={(e) => setQuestion(e.target.value)}
+                          placeholder="What would you like to ask?"
+                          className={getInputClasses()}
+                          style={{ 
+                            borderColor: themeState.design.primaryColor,
+                            color: '#1a1a2e',
+                            fontSize: '16px',
+                            fontWeight: '500'
+                          }}
+                        />
             {errors.find(e => e.field === 'question') && (
               <p className="text-[#ff6363] font-bold text-base mt-2 bg-[#fafaff] px-3 py-2 rounded-lg shadow-lg border border-[#ff6363]/20">
                 {errors.find(e => e.field === 'question')?.message}
@@ -324,18 +336,19 @@ const PollCreator: React.FC = () => {
                        style={{ borderColor: themeState.design.primaryColor }}>
                     {index + 1}
                   </div>
-                  <input
-                    type="text"
-                    value={choice}
-                    onChange={(e) => updateChoice(index, e.target.value)}
-                    placeholder={`Enter choice ${index + 1}...`}
-                    className={`${getInputClasses()} flex-1 text-lg`}
-                    style={{ 
-                      borderColor: themeState.design.primaryColor,
-                      color: '#1a1a1a',
-                      fontSize: '16px'
-                    }}
-                  />
+                              <input
+                                type="text"
+                                value={choice}
+                                onChange={(e) => updateChoice(index, e.target.value)}
+                                placeholder={`Enter choice ${index + 1}...`}
+                                className={`${getInputClasses()} flex-1 text-lg`}
+                                style={{ 
+                                  borderColor: themeState.design.primaryColor,
+                                  color: '#1a1a2e',
+                                  fontSize: '16px',
+                                  fontWeight: '500'
+                                }}
+                              />
                   {choices.length > 2 && (
                     <button
                       type="button"

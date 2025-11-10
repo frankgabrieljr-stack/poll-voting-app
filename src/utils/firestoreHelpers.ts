@@ -50,6 +50,10 @@ export const getUserRole = async (userId: string): Promise<'user' | 'admin'> => 
  */
 export const savePollToFirestore = async (poll: Poll, userId: string, workspaceId?: string, title?: string, description?: string): Promise<void> => {
   try {
+    if (!userId) {
+      throw new Error('User ID is required to save poll');
+    }
+
     const pollRef = doc(db, 'polls', poll.id);
     
     const pollData = {
@@ -58,10 +62,15 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
       choices: poll.choices,
       createdAt: poll.createdAt instanceof Date ? Timestamp.fromDate(poll.createdAt) : serverTimestamp(),
       lastModified: serverTimestamp(),
-      design: poll.design,
+      design: poll.design || {
+        theme: 'designer',
+        primaryColor: '#8f4eff',
+        fontStyle: 'sans',
+        layout: 'card',
+      },
       backgroundImage: poll.design?.backgroundImage || null,
-      userId,
-      workspaceId: workspaceId || 'default',
+      userId, // Required for security rules
+      workspaceId: workspaceId || 'default', // Use 'default' if no workspace selected
       title: title || `Poll: ${poll.question.substring(0, 30)}${poll.question.length > 30 ? '...' : ''}`,
       description: description || '',
       totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
@@ -71,10 +80,27 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
       shareableLink: `${window.location.origin}/poll/${poll.id}`,
     };
 
+    console.log('Saving poll to Firestore:', {
+      pollId: poll.id,
+      userId,
+      workspaceId: workspaceId || 'default',
+      question: poll.question,
+      choicesCount: poll.choices.length,
+    });
+
     await setDoc(pollRef, pollData, { merge: true });
-  } catch (error) {
-    console.error('Error saving poll to Firestore:', error);
-    throw new Error('Failed to save poll. Please try again.');
+    
+    console.log('✅ Poll successfully written to Firestore');
+  } catch (error: any) {
+    console.error('❌ Error saving poll to Firestore:', error);
+    // Provide more detailed error message
+    if (error.code === 'permission-denied') {
+      throw new Error('Permission denied. Please check Firestore security rules allow authenticated users to create polls.');
+    } else if (error.code === 'unavailable') {
+      throw new Error('Firestore is unavailable. Please check your internet connection.');
+    } else {
+      throw new Error(`Failed to save poll: ${error.message || 'Unknown error'}`);
+    }
   }
 };
 
