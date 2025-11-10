@@ -86,32 +86,55 @@ const PollCreator: React.FC = () => {
       backgroundImage: poll.design.backgroundImage || 'No background image',
     });
 
-    // Auto-save poll to Firestore when created
-    if (currentUser) {
-      try {
-        console.log('Attempting to save poll to Firestore...', {
-          pollId: poll.id,
-          userId: currentUser.uid,
-          question: poll.question,
-        });
-        await savePoll(poll);
-        console.log('✅ Poll successfully saved to Firestore');
-      } catch (error: any) {
-        console.error('❌ Failed to auto-save poll:', error);
-        // Show user-friendly error message and prevent poll creation if save fails
-        const errorMessage = error.message || 'Unable to save poll. Please try again.';
-        alert(`Error saving poll: ${errorMessage}\n\nPlease check:\n1. You are logged in\n2. Firestore security rules allow poll creation\n3. Your internet connection is working`);
-        // Don't continue if save fails - poll won't be created
-        return;
-      }
-    } else {
-      console.warn('⚠️ No user logged in - poll will not be saved to Firestore');
-      alert('You must be logged in to save polls. Please log in and try again.');
+    // Validate user is logged in
+    if (!currentUser) {
+      console.error('❌ No user logged in');
+      alert('You must be logged in to create polls. Please log in and try again.');
       return;
     }
 
-    createPoll(poll);
-    setErrors([]);
+    // Auto-save poll to Firestore when created
+    try {
+      console.log('🚀 Starting poll creation process...', {
+        pollId: poll.id,
+        userId: currentUser.uid,
+        question: poll.question,
+        choicesCount: poll.choices.length,
+      });
+      
+      await savePoll(poll);
+      
+      console.log('✅ Poll successfully saved to Firestore');
+      
+      // Create poll in context for immediate use
+      createPoll(poll);
+      setErrors([]);
+      
+      // Navigate to workspace to show the new poll
+      setViewMode('workspace');
+      
+      // Show success message
+      setTimeout(() => {
+        alert('Poll created successfully! You can find it in "My Polls".');
+      }, 100);
+      
+    } catch (error: any) {
+      console.error('❌ CRITICAL: Failed to save poll to Firestore:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack,
+      });
+      
+      // Show detailed error message
+      const errorMessage = error.message || 'Unknown error occurred';
+      const errorDetails = error.code ? `\nError code: ${error.code}` : '';
+      
+      alert(`❌ Error saving poll: ${errorMessage}${errorDetails}\n\nTroubleshooting:\n1. Check browser console for details\n2. Verify you are logged in\n3. Check Firestore security rules\n4. Verify internet connection\n5. Check Firebase project configuration`);
+      
+      // Don't continue if save fails
+      return;
+    }
   };
 
   const getThemeClasses = () => {
@@ -300,7 +323,7 @@ const PollCreator: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
           {/* Question Input */}
           <div>
-            <label htmlFor="question" className="block text-lg md:text-xl font-bold mb-3 text-white">
+            <label htmlFor="question" className="block text-lg md:text-xl font-bold mb-3 text-[#1a1a2e]">
               Poll Question
             </label>
                         <input
@@ -326,7 +349,7 @@ const PollCreator: React.FC = () => {
 
           {/* Choices */}
           <div>
-            <label className="block text-lg md:text-xl font-bold mb-3 text-white">
+            <label className="block text-lg md:text-xl font-bold mb-3 text-[#1a1a2e]">
               Choices ({choices.length}/10)
             </label>
             <div className="space-y-4">

@@ -158,16 +158,31 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const savePoll = async (poll: Poll, title?: string, description?: string): Promise<void> => {
     if (!currentUser) {
+      console.error('❌ savePoll: No current user');
       throw new Error('You must be logged in to save polls');
+    }
+
+    if (!currentUser.uid) {
+      console.error('❌ savePoll: User UID is missing');
+      throw new Error('User ID is missing. Please log out and log back in.');
     }
 
     dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
       const workspace = getCurrentWorkspace();
-      const workspaceId = workspace?.id;
+      const workspaceId = workspace?.id || 'default';
+      
+      console.log('💾 savePoll: Preparing to save', {
+        pollId: poll.id,
+        userId: currentUser.uid,
+        workspaceId,
+        hasWorkspace: !!workspace,
+      });
       
       await savePollToFirestore(poll, currentUser.uid, workspaceId, title, description);
+      
+      console.log('✅ savePoll: Successfully saved to Firestore');
       
       const savedPoll: SavedPoll = {
         id: poll.id,

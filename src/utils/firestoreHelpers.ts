@@ -80,17 +80,28 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
       shareableLink: `${window.location.origin}/poll/${poll.id}`,
     };
 
-    console.log('Saving poll to Firestore:', {
+    console.log('💾 Saving poll to Firestore:', {
       pollId: poll.id,
       userId,
       workspaceId: workspaceId || 'default',
       question: poll.question,
       choicesCount: poll.choices.length,
+      pollDataKeys: Object.keys(pollData),
     });
 
-    await setDoc(pollRef, pollData, { merge: true });
-    
-    console.log('✅ Poll successfully written to Firestore');
+    try {
+      await setDoc(pollRef, pollData, { merge: true });
+      console.log('✅ Poll successfully written to Firestore document:', pollRef.id);
+    } catch (writeError: any) {
+      console.error('❌ Firestore write error:', {
+        code: writeError.code,
+        message: writeError.message,
+        stack: writeError.stack,
+        pollId: poll.id,
+        userId,
+      });
+      throw writeError;
+    }
   } catch (error: any) {
     console.error('❌ Error saving poll to Firestore:', error);
     // Provide more detailed error message
