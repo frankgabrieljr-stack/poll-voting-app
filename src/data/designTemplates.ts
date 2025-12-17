@@ -290,6 +290,108 @@ export const stockImages: StockImage[] = [
     alt: 'Delicious food',
     attribution: 'Unsplash'
   },
+  // Holiday / Seasonal theme
+  {
+    id: 'holiday-christmas-tree',
+    url: 'https://images.unsplash.com/photo-1512207846876-bb54ef5056e4?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1512207846876-bb54ef5056e4?w=200&h=150&fit=crop',
+    category: 'holiday',
+    tags: ['christmas', 'holiday', 'tree', 'lights', 'festive', 'winter'],
+    alt: 'Decorated Christmas tree with lights',
+    attribution: 'Unsplash'
+  },
+  {
+    id: 'holiday-christmas-gifts',
+    url: 'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=200&h=150&fit=crop',
+    category: 'holiday',
+    tags: ['christmas', 'holiday', 'gifts', 'presents', 'xmas', 'winter'],
+    alt: 'Wrapped Christmas gifts with ribbon',
+    attribution: 'Unsplash'
+  },
+  {
+    id: 'holiday-winter-snow',
+    url: 'https://images.unsplash.com/photo-1483721310020-03333e577078?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1483721310020-03333e577078?w=200&h=150&fit=crop',
+    category: 'winter',
+    tags: ['winter', 'snow', 'cold', 'holiday', 'christmas', 'outdoor'],
+    alt: 'Snowy winter landscape',
+    attribution: 'Unsplash'
+  },
+  {
+    id: 'holiday-new-year-party',
+    url: 'https://images.unsplash.com/photo-1519750157634-b6d493a0f77d?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1519750157634-b6d493a0f77d?w=200&h=150&fit=crop',
+    category: 'holiday',
+    tags: ['party', 'new year', 'holiday', 'celebration', 'sparklers', 'festive'],
+    alt: 'People celebrating with sparklers',
+    attribution: 'Unsplash'
+  },
+  {
+    id: 'holiday-winter-party',
+    url: 'https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?w=200&h=150&fit=crop',
+    category: 'holiday',
+    tags: ['holiday', 'party', 'winter', 'friends', 'celebration', 'christmas'],
+    alt: 'Holiday party with friends',
+    attribution: 'Unsplash'
+  },
+  // Vacation / Travel theme
+  {
+    id: 'vacation-beach',
+    url: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=200&h=150&fit=crop',
+    category: 'vacation',
+    tags: ['vacation', 'beach', 'travel', 'summer', 'holiday', 'ocean'],
+    alt: 'Sunny beach vacation scene with palm trees',
+    attribution: 'Unsplash'
+  },
+  {
+    id: 'vacation-city',
+    url: 'https://images.unsplash.com/photo-1428366890462-dd4baecf492b?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1428366890462-dd4baecf492b?w=200&h=150&fit=crop',
+    category: 'vacation',
+    tags: ['vacation', 'city', 'travel', 'tourism', 'lights', 'night'],
+    alt: 'City skyline at night for an urban vacation',
+    attribution: 'Unsplash'
+  },
+  {
+    id: 'vacation-mountains',
+    url: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=200&h=150&fit=crop',
+    category: 'vacation',
+    tags: ['vacation', 'mountains', 'hiking', 'travel', 'nature', 'adventure'],
+    alt: 'Mountain vacation landscape with hiker',
+    attribution: 'Unsplash'
+  },
+  // Clothes / Fashion / Ugly sweater theme
+  {
+    id: 'fashion-clothes-rack',
+    url: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=200&h=150&fit=crop',
+    category: 'clothes',
+    tags: ['clothes', 'fashion', 'wardrobe', 'shopping', 'style'],
+    alt: 'Clothes hanging on a rack',
+    attribution: 'Unsplash'
+  },
+  {
+    id: 'fashion-colorful-sweaters',
+    url: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=800&h=600&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=200&h=150&fit=crop',
+    category: 'clothes',
+    tags: ['sweaters', 'clothes', 'fashion', 'colorful', 'cozy', 'winter'],
+    alt: 'Stack of colorful sweaters',
+    attribution: 'Unsplash'
+  },
+  {
+    id: 'holiday-ugly-sweater-party',
+    url: 'https://images.pexels.com/photos/1729797/pexels-photo-1729797.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/1729797/pexels-photo-1729797.jpeg?auto=compress&cs=tinysrgb&w=200',
+    category: 'holiday',
+    tags: ['ugly sweater', 'ugly-sweater', 'christmas sweater', 'holiday', 'party', 'clothes', 'winter'],
+    alt: 'Friends wearing Christmas ugly sweaters at a party',
+    attribution: 'Unsplash'
+  },
   // Abstract/Minimal theme
   {
     id: 'abstract-geometric',

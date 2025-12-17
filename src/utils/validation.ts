@@ -17,9 +17,6 @@ export const validateChoices = (choices: string[]): ValidationError | null => {
   if (choices.length < 2) {
     return { field: 'choices', message: 'At least 2 choices are required' };
   }
-  if (choices.length > 10) {
-    return { field: 'choices', message: 'Maximum 10 choices allowed' };
-  }
   
   // Check for empty choices
   const emptyChoices = choices.filter(choice => !choice.trim());

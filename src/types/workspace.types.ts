@@ -47,7 +47,17 @@ export interface StockImage {
   id: string;
   url: string;
   thumbnail: string;
-  category: 'business' | 'nature' | 'abstract' | 'technology' | 'lifestyle' | 'education';
+  category:
+    | 'business'
+    | 'nature'
+    | 'abstract'
+    | 'technology'
+    | 'lifestyle'
+    | 'education'
+    | 'holiday'
+    | 'winter'
+    | 'vacation'
+    | 'clothes';
   tags: string[];
   alt: string;
   attribution?: string;

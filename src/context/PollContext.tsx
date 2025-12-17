@@ -1,26 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { Poll, ViewMode } from '../types/poll.types';
-
-// Helper function to save poll votes to storage
-const savePollVotes = (poll: Poll) => {
-  try {
-    const existingPolls = JSON.parse(localStorage.getItem('poll-workspace') || '[]');
-    const pollIndex = existingPolls.findIndex((p: any) => p.id === poll.id);
-    
-    if (pollIndex >= 0) {
-      // Update existing poll with new vote counts
-      existingPolls[pollIndex] = {
-        ...existingPolls[pollIndex],
-        choices: poll.choices,
-        totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
-        lastModified: new Date(),
-      };
-      localStorage.setItem('poll-workspace', JSON.stringify(existingPolls));
-    }
-  } catch (error) {
-    console.error('Failed to save poll votes:', error);
-  }
-};
+import { useWorkspace } from './WorkspaceContext';
 
 interface PollState {
   currentPoll: Poll | null;
@@ -53,21 +33,18 @@ const pollReducer = (state: PollState, action: PollAction): PollState => {
       };
     case 'VOTE':
       if (!state.currentPoll) return state;
-      
+
       const updatedChoices = state.currentPoll.choices.map(choice =>
         choice.id === action.payload.choiceId
           ? { ...choice, votes: choice.votes + 1 }
           : choice
       );
-      
+
       const updatedPoll = {
         ...state.currentPoll,
         choices: updatedChoices,
       };
-      
-      // Persist votes to storage
-      savePollVotes(updatedPoll);
-      
+
       return {
         ...state,
         currentPoll: updatedPoll,
@@ -127,12 +104,35 @@ const PollContext = createContext<PollContextType | undefined>(undefined);
 
 export const PollProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(pollReducer, initialState);
+  const { updatePoll } = useWorkspace();
 
   const createPoll = (poll: Poll) => {
     dispatch({ type: 'CREATE_POLL', payload: poll });
   };
 
-  const vote = (choiceId: string) => {
+  const vote = async (choiceId: string) => {
+    if (!state.currentPoll) {
+      return;
+    }
+
+    // Compute the updated poll so we can persist votes before/alongside the state update
+    const updatedChoices = state.currentPoll.choices.map(choice =>
+      choice.id === choiceId ? { ...choice, votes: choice.votes + 1 } : choice
+    );
+
+    const updatedPoll: Poll = {
+      ...state.currentPoll,
+      choices: updatedChoices,
+    };
+
+    // Persist updated votes to the primary storage (Firestore via WorkspaceContext)
+    try {
+      await updatePoll(updatedPoll, updatedPoll.title, updatedPoll.description);
+    } catch (error) {
+      console.error('Failed to persist poll votes to Firestore:', error);
+    }
+
+    // Update local voting state
     dispatch({ type: 'VOTE', payload: { choiceId } });
   };
 

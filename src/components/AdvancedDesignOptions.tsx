@@ -13,6 +13,7 @@ const AdvancedDesignOptions: React.FC = () => {
   const [imageSearchTerm, setImageSearchTerm] = useState('');
   const [selectedTheme, setSelectedTheme] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
+  const [showAllImagesModal, setShowAllImagesModal] = useState(false);
 
   // Sync selected image with saved background image from theme state
   useEffect(() => {
@@ -361,7 +362,7 @@ const AdvancedDesignOptions: React.FC = () => {
                 type="text"
                 value={imageSearchTerm}
                 onChange={(e) => setImageSearchTerm(e.target.value)}
-                placeholder="Type words like: business, nature, fun, colorful..."
+                placeholder="Try: Christmas, holiday, winter, party, vacation, clothes, sweater..."
                 className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               />
             </div>
@@ -396,40 +397,55 @@ const AdvancedDesignOptions: React.FC = () => {
               </div>
             </div>
 
-            {/* Image Grid */}
+            {/* Image Grid (show a subset, with option to view all in a modal) */}
             {filteredImages.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {filteredImages.map((image) => (
-                  <div
-                    key={image.id}
-                    className={`relative rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 border-2 ${
-                      selectedImage?.id === image.id ? 'border-blue-500 ring-2 ring-blue-300' : 'border-gray-200'
-                    }`}
-                    onClick={() => handleImageSelect(image)}
-                    title={`Use ${image.alt} as background`}
-                  >
-                    <img
-                      src={image.thumbnail}
-                      alt={image.alt}
-                      className="w-full h-32 object-cover"
-                      loading="lazy"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-2">
-                      <p className="text-xs font-semibold">{image.category}</p>
-                    </div>
-                    {selectedImage?.id === image.id && (
-                      <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                        ✓
+              <>
+                <div className="max-h-96 overflow-y-auto pr-1">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {filteredImages.slice(0, 8).map((image) => (
+                      <div
+                        key={image.id}
+                        className={`relative rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 border-2 ${
+                          selectedImage?.id === image.id ? 'border-blue-500 ring-2 ring-blue-300' : 'border-gray-200'
+                        }`}
+                        onClick={() => handleImageSelect(image)}
+                        title={`Use ${image.alt} as background`}
+                      >
+                        <img
+                          src={image.thumbnail}
+                          alt={image.alt}
+                          className="w-full h-32 object-cover"
+                          loading="lazy"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-2">
+                          <p className="text-xs font-semibold">{image.category}</p>
+                        </div>
+                        {selectedImage?.id === image.id && (
+                          <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                            ✓
+                          </div>
+                        )}
                       </div>
-                    )}
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+                {filteredImages.length > 8 && (
+                  <div className="mt-4 text-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowAllImagesModal(true)}
+                      className="inline-flex items-center px-4 py-2 rounded-lg font-semibold text-sm bg-[#fafaff] text-[#1a1a2e] border border-[#8f4eff]/40 shadow-md hover:bg-[#f0f0ff] hover:scale-105 transition-all duration-200"
+                    >
+                      View all {filteredImages.length} images
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-12 bg-gray-50 rounded-lg">
                 <div className="text-5xl mb-4">🔍</div>
                 <p className="text-lg font-semibold text-gray-700">No images found—try typing a different word.</p>
-                <p className="text-sm text-gray-600 mt-2">Try: business, nature, fun, creative, or minimal</p>
+                <p className="text-sm text-gray-600 mt-2">Try: Christmas, holiday, winter, party, vacation, clothes, or sweater</p>
               </div>
             )}
           </div>
@@ -504,6 +520,53 @@ const AdvancedDesignOptions: React.FC = () => {
                   </button>
                 );
               })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal showing all filtered images when requested */}
+      {showAllImagesModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[80vh] overflow-y-auto p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-lg font-bold text-gray-900">
+                All image results
+              </h4>
+              <button
+                type="button"
+                onClick={() => setShowAllImagesModal(false)}
+                className="px-3 py-1 rounded-lg text-sm font-semibold bg-gray-100 hover:bg-gray-200 text-gray-800"
+              >
+                ✕ Close
+              </button>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredImages.map((image) => (
+                <div
+                  key={image.id}
+                  className={`relative rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 border-2 ${
+                    selectedImage?.id === image.id ? 'border-blue-500 ring-2 ring-blue-300' : 'border-gray-200'
+                  }`}
+                  onClick={() => handleImageSelect(image)}
+                  title={`Use ${image.alt} as background`}
+                >
+                  <img
+                    src={image.thumbnail}
+                    alt={image.alt}
+                    className="w-full h-32 object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-2">
+                    <p className="text-xs font-semibold">{image.category}</p>
+                  </div>
+                  {selectedImage?.id === image.id && (
+                    <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -14,12 +14,72 @@ const PollResults: React.FC = () => {
   const results = generatePollResults(poll);
   const totalVotes = poll.choices.reduce((sum, choice) => sum + choice.votes, 0);
 
+  // Data for single pie chart + grid
+  const chartColors = ['#8f4eff', '#18e6c1', '#f97316', '#ec4899', '#3b82f6', '#10b981', '#facc15', '#6366f1'];
+  const chartData = poll.choices.map((choice, index) => {
+    const result = results.results.find(r => r.choice === choice.text);
+    const percentage = result?.percentage || 0;
+    return {
+      id: choice.id,
+      label: choice.text,
+      votes: choice.votes,
+      percentage,
+      color: chartColors[index % chartColors.length],
+    };
+  });
+
+  // Sort by most votes to least for a cascading view
+  const sortedChartData = [...chartData].sort((a, b) => b.votes - a.votes);
+
+  let cumulativePercent = 0;
+  const pieSlices =
+    totalVotes > 0
+      ? sortedChartData.map((item) => {
+          const slice = (
+            <circle
+              key={item.id}
+              r="15.9155"
+              cx="50%"
+              cy="50%"
+              fill="transparent"
+              stroke={item.color}
+              strokeWidth="7"
+              strokeDasharray={`${item.percentage} ${100 - item.percentage}`}
+              strokeDashoffset={25 - cumulativePercent}
+            />
+          );
+          cumulativePercent += item.percentage;
+          return slice;
+        })
+      : [];
+
   const handleVoteAgain = () => {
     resetVotingState();
     setShowSuccessMessage(true);
-    setAutoAdvanceEnabled(false);
     setTimeRemaining(3);
   };
+
+  // Persist auto-advance preference per poll so it stays active once enabled
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(`poll-auto-advance-${poll.id}`);
+      if (stored === 'true') {
+        setAutoAdvanceEnabled(true);
+      }
+    } catch (error) {
+      console.error('Failed to read auto-advance preference from storage:', error);
+    }
+    // Only run when the poll changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [poll.id]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(`poll-auto-advance-${poll.id}`, autoAdvanceEnabled ? 'true' : 'false');
+    } catch (error) {
+      console.error('Failed to save auto-advance preference to storage:', error);
+    }
+  }, [poll.id, autoAdvanceEnabled]);
 
   // Auto-advance timer effect
   useEffect(() => {
@@ -159,58 +219,74 @@ const PollResults: React.FC = () => {
           </button>
         </div>
 
-        {/* Results */}
-        <div className="space-y-4 mb-8">
-          {poll.choices.map((choice) => {
-            const result = results.results.find(r => r.choice === choice.text);
-            const percentage = result?.percentage || 0;
-            const votes = choice.votes;
-            
-            return (
-              <div key={choice.id} className={getResultCardClasses()}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-lg font-semibold text-[#1a1a2e]">{choice.text}</span>
-                  <div className="text-right">
-                    <span className="text-2xl font-bold text-[#1a1a2e]">{votes}</span>
-                    <span className="text-sm text-[#4a4a6a] ml-1">votes</span>
-                    <div className="text-lg font-semibold text-[#1a1a2e]">{percentage}%</div>
-                  </div>
-                </div>
-                
-                <div className={getProgressBarClasses()}>
-                  <div
-                    className={getProgressFillClasses()}
-                    style={{
-                      width: `${percentage}%`,
-                      transition: 'width 1s ease-in-out'
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Visual Chart */}
+        {/* Results - single pie chart + grid */}
         <div className="mb-8">
           <h3 className="text-xl font-bold mb-4 text-center text-white">Visual Breakdown</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {poll.choices.map((choice) => {
-              const result = results.results.find(r => r.choice === choice.text);
-              const percentage = result?.percentage || 0;
-              
-              return (
-                <div key={choice.id} className="text-center bg-[#fafaff] rounded-xl p-4 border border-[#8f4eff]/10 shadow-md">
-                  <div
-                    className="w-24 h-24 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] shadow-lg"
-                  >
-                    {percentage}%
-                  </div>
-                  <p className="text-sm font-medium text-[#1a1a2e]">{choice.text}</p>
-                  <p className="text-xs text-[#4a4a6a]">{choice.votes} votes</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Pie Chart */}
+            <div className="flex justify-center">
+              <div className="relative w-48 h-48">
+                <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+                  <circle
+                    r="15.9155"
+                    cx="18"
+                    cy="18"
+                    fill="transparent"
+                    stroke="#e5e7eb"
+                    strokeWidth="7"
+                  />
+                  {pieSlices}
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-sm text-white/80">Total Votes</span>
+                  <span className="text-2xl font-bold text-white">{totalVotes}</span>
                 </div>
-              );
-            })}
+              </div>
+            </div>
+
+            {/* Grid of counts & percentages */}
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-sm bg-[#fafaff] rounded-xl shadow-md overflow-hidden">
+                <thead className="bg-[#f3f4ff]">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold text-[#1a1a2e]">Choice</th>
+                    <th className="px-4 py-3 font-semibold text-[#1a1a2e] text-right">Votes</th>
+                    <th className="px-4 py-3 font-semibold text-[#1a1a2e] text-right">Percentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedChartData.map((item) => (
+                    <tr key={item.id} className="border-t border-[#e5e7eb]">
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-block w-3 h-3 rounded-full"
+                            style={{ backgroundColor: item.color }}
+                          />
+                          <span className="text-[#1a1a2e] font-medium">{item.label}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 text-right text-[#1a1a2e] font-semibold">
+                        {item.votes}
+                      </td>
+                      <td className="px-4 py-2 text-right text-[#4a4a6a]">
+                        {item.percentage.toFixed(1)}%
+                      </td>
+                    </tr>
+                  ))}
+                  {chartData.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="px-4 py-4 text-center text-[#4a4a6a]"
+                      >
+                        No choices available.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 

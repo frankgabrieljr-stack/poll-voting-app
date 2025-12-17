@@ -21,9 +21,7 @@ const PollCreator: React.FC = () => {
   const [showAdvancedTemplates, setShowAdvancedTemplates] = useState(false);
 
   const addChoice = () => {
-    if (choices.length < 10) {
-      setChoices([...choices, '']);
-    }
+    setChoices([...choices, '']);
   };
 
   const removeChoice = (index: number) => {
@@ -350,9 +348,9 @@ const PollCreator: React.FC = () => {
           {/* Choices */}
           <div>
             <label className="block text-lg md:text-xl font-bold mb-3 text-[#1a1a2e]">
-              Choices ({choices.length}/10)
+              Choices ({choices.length})
             </label>
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-96 overflow-y-auto pr-1">
               {choices.map((choice, index) => (
                 <div key={index} className="flex items-center space-x-3">
                   <div className="flex-shrink-0 w-8 h-8 bg-[#fafaff] rounded-full flex items-center justify-center font-bold text-[#1a1a2e] shadow-lg border border-[#8f4eff]/20"
@@ -393,21 +391,19 @@ const PollCreator: React.FC = () => {
           </div>
 
           {/* Add Choice Button */}
-          {choices.length < 10 && (
-            <button
-              type="button"
-              onClick={addChoice}
-              className="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 border-4 bg-[#fafaff] shadow-xl border-[#8f4eff] text-[#8f4eff]"
-              style={{
-                boxShadow: `0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 4px ${themeState.design.primaryColor}40`
-              }}
-            >
-              <span className="flex items-center justify-center space-x-2">
-                <span className="text-2xl">➕</span>
-                <span>Add Choice ({choices.length}/10)</span>
-              </span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={addChoice}
+            className="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 border-4 bg-[#fafaff] shadow-xl border-[#8f4eff] text-[#8f4eff]"
+            style={{
+              boxShadow: `0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 4px ${themeState.design.primaryColor}40`
+            }}
+          >
+            <span className="flex items-center justify-center space-x-2">
+              <span className="text-2xl">➕</span>
+              <span>Add Choice ({choices.length})</span>
+            </span>
+          </button>
 
           {/* Submit Button */}
           <button
