@@ -55,6 +55,21 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
     }
 
     const pollRef = doc(db, 'polls', poll.id);
+
+    // Normalize design so we never send undefined fields to Firestore
+    const rawDesign = poll.design || {
+      theme: 'designer',
+      primaryColor: '#8f4eff',
+      fontStyle: 'sans',
+      layout: 'card',
+    };
+
+    const normalizedDesign = {
+      ...rawDesign,
+      ...(rawDesign.backgroundImage === undefined
+        ? {}
+        : { backgroundImage: rawDesign.backgroundImage ?? null }),
+    };
     
     const pollData = {
       id: poll.id,
@@ -62,13 +77,8 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
       choices: poll.choices,
       createdAt: poll.createdAt instanceof Date ? Timestamp.fromDate(poll.createdAt) : serverTimestamp(),
       lastModified: serverTimestamp(),
-      design: poll.design || {
-        theme: 'designer',
-        primaryColor: '#8f4eff',
-        fontStyle: 'sans',
-        layout: 'card',
-      },
-      backgroundImage: poll.design?.backgroundImage || null,
+      design: normalizedDesign,
+      backgroundImage: rawDesign.backgroundImage ?? null,
       userId, // Required for security rules
       workspaceId: workspaceId || 'default', // Use 'default' if no workspace selected
       title: title || `Poll: ${poll.question.substring(0, 30)}${poll.question.length > 30 ? '...' : ''}`,
@@ -243,12 +253,27 @@ export const updatePollInFirestore = async (poll: Poll, userId: string, _workspa
       throw new Error('You do not have permission to update this poll');
     }
     
+    // Normalize design to avoid undefined values
+    const rawDesign = poll.design || {
+      theme: 'designer',
+      primaryColor: '#8f4eff',
+      fontStyle: 'sans',
+      layout: 'card',
+    };
+
+    const normalizedDesign = {
+      ...rawDesign,
+      ...(rawDesign.backgroundImage === undefined
+        ? {}
+        : { backgroundImage: rawDesign.backgroundImage ?? null }),
+    };
+
     await updateDoc(pollRef, {
       question: poll.question,
       choices: poll.choices,
       lastModified: serverTimestamp(),
-      design: poll.design,
-      backgroundImage: poll.design?.backgroundImage || null,
+      design: normalizedDesign,
+      backgroundImage: rawDesign.backgroundImage ?? null,
       title: title || pollSnap.data().title,
       description: description || pollSnap.data().description || '',
       totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
