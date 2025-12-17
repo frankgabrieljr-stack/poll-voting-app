@@ -64,11 +64,12 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
       layout: 'card',
     };
 
+    // Explicitly strip backgroundImage from the nested design object so we never
+    // send design.backgroundImage: undefined to Firestore. We store it only
+    // in the top-level backgroundImage field.
+    const { backgroundImage, ...designWithoutBg } = rawDesign as any;
     const normalizedDesign = {
-      ...rawDesign,
-      ...(rawDesign.backgroundImage === undefined
-        ? {}
-        : { backgroundImage: rawDesign.backgroundImage ?? null }),
+      ...designWithoutBg,
     };
     
     const pollData = {
@@ -78,7 +79,7 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
       createdAt: poll.createdAt instanceof Date ? Timestamp.fromDate(poll.createdAt) : serverTimestamp(),
       lastModified: serverTimestamp(),
       design: normalizedDesign,
-      backgroundImage: rawDesign.backgroundImage ?? null,
+      backgroundImage: backgroundImage ?? null,
       userId, // Required for security rules
       workspaceId: workspaceId || 'default', // Use 'default' if no workspace selected
       title: title || `Poll: ${poll.question.substring(0, 30)}${poll.question.length > 30 ? '...' : ''}`,
@@ -261,11 +262,10 @@ export const updatePollInFirestore = async (poll: Poll, userId: string, _workspa
       layout: 'card',
     };
 
+    // Strip backgroundImage from nested design, keep only at top level
+    const { backgroundImage, ...designWithoutBg } = rawDesign as any;
     const normalizedDesign = {
-      ...rawDesign,
-      ...(rawDesign.backgroundImage === undefined
-        ? {}
-        : { backgroundImage: rawDesign.backgroundImage ?? null }),
+      ...designWithoutBg,
     };
 
     await updateDoc(pollRef, {
@@ -273,7 +273,7 @@ export const updatePollInFirestore = async (poll: Poll, userId: string, _workspa
       choices: poll.choices,
       lastModified: serverTimestamp(),
       design: normalizedDesign,
-      backgroundImage: rawDesign.backgroundImage ?? null,
+      backgroundImage: backgroundImage ?? null,
       title: title || pollSnap.data().title,
       description: description || pollSnap.data().description || '',
       totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
