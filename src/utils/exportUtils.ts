@@ -56,13 +56,9 @@ export const exportToJSON = (poll: Poll): void => {
 };
 
 export const generateShareableLink = (poll: Poll): string => {
-  const pollData = encodeURIComponent(JSON.stringify({
-    question: poll.question,
-    choices: poll.choices.map(choice => ({ text: choice.text, votes: 0 })),
-    design: poll.design
-  }));
-  
-  return `${window.location.origin}${window.location.pathname}?poll=${pollData}`;
+  // Use the canonical shared-poll route so anyone with the link can vote
+  // without needing to be logged in.
+  return `${window.location.origin}/poll/${poll.id}`;
 };
 
 

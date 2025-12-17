@@ -89,9 +89,10 @@ const ExportButtons: React.FC = () => {
         
         <button
           onClick={handleShare}
-          className={getSecondaryButtonClasses()}
+          className={`${getButtonClasses()}`}
+          style={{ backgroundColor: themeState.design.primaryColor }}
         >
-          🔗 Share Poll
+          🔗 Copy Share Link
         </button>
       </div>
       
