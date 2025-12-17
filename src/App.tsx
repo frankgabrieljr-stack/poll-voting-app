@@ -159,8 +159,10 @@ const AppContent: React.FC = () => {
     return currentUser && currentUser.email && !currentUser.emailVerified;
   }, [currentUser]);
 
-  // Show loading state while auth is initializing
-  if (authLoading) {
+  // Show loading state while auth is initializing, but do NOT block shared poll links.
+  // This ensures public /poll/:id links work even if Firebase Auth is still initializing
+  // or fails to initialize in some browsers.
+  if (authLoading && state.viewMode !== 'shared-poll') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
         <div className="text-center">
