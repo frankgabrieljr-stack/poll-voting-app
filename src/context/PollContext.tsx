@@ -134,7 +134,7 @@ export const PollProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // not depend on authentication.
     if (state.viewMode === 'shared-poll') {
       try {
-        await updatePublicPollVotes(updatedPoll.id, updatedPoll.choices);
+        await updatePublicPollVotes(updatedPoll.id, choiceId);
       } catch (error) {
         console.error('Failed to persist public poll votes to Firestore:', error);
       }

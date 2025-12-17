@@ -1,7 +1,7 @@
-import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, serverTimestamp, Timestamp, runTransaction } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { db } from '../config/firebase';
-import { Poll, SavedPoll, Choice } from '../types/poll.types';
+import { Poll, SavedPoll } from '../types/poll.types';
 import { Workspace } from '../types/workspace.types';
 
 /**
@@ -288,14 +288,32 @@ export const updatePollInFirestore = async (poll: Poll, userId: string, _workspa
  * Update votes for a public poll without requiring authentication.
  * This is used for truly public voting on shared poll links.
  */
-export const updatePublicPollVotes = async (pollId: string, choices: Choice[]): Promise<void> => {
+export const updatePublicPollVotes = async (pollId: string, choiceId: string): Promise<void> => {
   try {
     const pollRef = doc(db, 'polls', pollId);
 
-    await updateDoc(pollRef, {
-      choices,
-      totalVotes: choices.reduce((sum, choice) => sum + choice.votes, 0),
-      lastModified: serverTimestamp(),
+    await runTransaction(db, async (transaction) => {
+      const snapshot = await transaction.get(pollRef);
+      if (!snapshot.exists()) {
+        throw new Error('Poll not found');
+      }
+
+      const data = snapshot.data();
+      const existingChoices = (data.choices || []) as Array<{ id: string; text: string; votes: number }>;
+
+      const updatedChoices = existingChoices.map((choice) =>
+        choice.id === choiceId
+          ? { ...choice, votes: (choice.votes || 0) + 1 }
+          : choice
+      );
+
+      const currentTotal = typeof data.totalVotes === 'number' ? data.totalVotes : 0;
+
+      transaction.update(pollRef, {
+        choices: updatedChoices,
+        totalVotes: currentTotal + 1,
+        lastModified: serverTimestamp(),
+      });
     });
   } catch (error) {
     console.error('Error updating public poll votes in Firestore:', error);
