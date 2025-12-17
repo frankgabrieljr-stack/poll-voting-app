@@ -100,7 +100,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
   const { currentUser } = useAuth();
   const { getCurrentWorkspace } = useWorkspaceManager();
 
-  // Load polls when user logs in or workspace changes
+  // Load polls when user logs in
   useEffect(() => {
     if (currentUser) {
       loadPolls();
@@ -113,15 +113,6 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
-  // Reload polls when workspace changes
-  const currentWorkspace = getCurrentWorkspace();
-  useEffect(() => {
-    if (currentUser && currentWorkspace) {
-      loadPolls();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentWorkspace?.id]);
-
   const loadPolls = async () => {
     if (!currentUser) {
       dispatch({ type: 'LOAD_POLLS', payload: [] });
@@ -132,9 +123,8 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
-      const workspace = getCurrentWorkspace();
-      const workspaceId = workspace?.id;
-      const polls = await loadPollsFromFirestore(currentUser.uid, workspaceId);
+      // Load all polls for this user across workspaces to keep UX simple
+      const polls = await loadPollsFromFirestore(currentUser.uid, undefined);
       dispatch({ type: 'LOAD_POLLS', payload: polls });
     } catch (error: any) {
       console.error('Failed to load polls:', error);
