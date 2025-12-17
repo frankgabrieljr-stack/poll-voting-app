@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useCallback } from 'react';
 import { Poll, ViewMode } from '../types/poll.types';
 import { useWorkspace } from './WorkspaceContext';
 
@@ -106,9 +106,9 @@ export const PollProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [state, dispatch] = useReducer(pollReducer, initialState);
   const { updatePoll } = useWorkspace();
 
-  const createPoll = (poll: Poll) => {
+  const createPoll = useCallback((poll: Poll) => {
     dispatch({ type: 'CREATE_POLL', payload: poll });
-  };
+  }, []);
 
   const vote = async (choiceId: string) => {
     if (!state.currentPoll) {

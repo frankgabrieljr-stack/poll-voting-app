@@ -66,7 +66,7 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
     return () => {
       isMounted = false;
     };
-  }, [pollId, createPoll]);
+  }, [pollId]);
 
   if (loading) {
     return (
