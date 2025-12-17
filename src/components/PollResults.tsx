@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { usePoll } from '../context/PollContext';
 import { generatePollResults } from '../utils/exportUtils';
 
-const PollResults: React.FC = () => {
+interface PollResultsProps {
+  isSharedView?: boolean;
+}
+
+const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
   const { state, setViewMode, resetPoll, resetVotingState } = usePoll();
   const [showSuccessMessage, setShowSuccessMessage] = useState(true);
   const [autoAdvanceEnabled, setAutoAdvanceEnabled] = useState(false);
@@ -276,42 +280,46 @@ const PollResults: React.FC = () => {
         </div>
 
         {/* Auto-Advance Toggle */}
-        <div className="mb-6 flex justify-center">
-          <button
-            onClick={toggleAutoAdvance}
-            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 ${
-              autoAdvanceEnabled 
-                ? 'bg-gradient-to-r from-[#18e6c1] to-[#2ef9d8] text-white border-[#18e6c1] shadow-lg' 
-                : 'bg-[#fafaff] text-[#8f4eff] border-[#8f4eff] shadow-md'
-            }`}
-          >
-            {autoAdvanceEnabled ? '⏸️ Pause Auto-Advance' : '▶️ Enable Auto-Advance (3s)'}
-          </button>
-        </div>
+        {!isSharedView && (
+          <div className="mb-6 flex justify-center">
+            <button
+              onClick={toggleAutoAdvance}
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 ${
+                autoAdvanceEnabled 
+                  ? 'bg-gradient-to-r from-[#18e6c1] to-[#2ef9d8] text-white border-[#18e6c1] shadow-lg' 
+                  : 'bg-[#fafaff] text-[#8f4eff] border-[#8f4eff] shadow-md'
+              }`}
+            >
+              {autoAdvanceEnabled ? '⏸️ Pause Auto-Advance' : '▶️ Enable Auto-Advance (3s)'}
+            </button>
+          </div>
+        )}
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={() => setViewMode('landing')}
-            className="px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 border-[#8f4eff] text-[#8f4eff] bg-[#fafaff] hover:bg-[#f0f0ff] shadow-md"
-          >
-            🏠 Back to Home
-          </button>
-          
-          <button
-            onClick={() => setViewMode('create')}
-            className={getButtonClasses()}
-          >
-            Create New Poll
-          </button>
-          
-          <button
-            onClick={resetPoll}
-            className="px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 border-[#ff6363] text-[#ff6363] bg-[#fafaff] hover:bg-[#fff0f0] shadow-md"
-          >
-            Reset Poll
-          </button>
-        </div>
+        {!isSharedView && (
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => setViewMode('landing')}
+              className="px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 border-[#8f4eff] text-[#8f4eff] bg-[#fafaff] hover:bg-[#f0f0ff] shadow-md"
+            >
+              🏠 Back to Home
+            </button>
+            
+            <button
+              onClick={() => setViewMode('create')}
+              className={getButtonClasses()}
+            >
+              Create New Poll
+            </button>
+            
+            <button
+              onClick={resetPoll}
+              className="px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 border-[#ff6363] text-[#ff6363] bg-[#fafaff] hover:bg-[#fff0f0] shadow-md"
+            >
+              Reset Poll
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

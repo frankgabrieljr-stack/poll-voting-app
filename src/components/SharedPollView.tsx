@@ -101,12 +101,12 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
 
   // Show voting interface if poll is loaded
   if (state.currentPoll && !state.hasVoted) {
-    return <PollVoting />;
+    return <PollVoting isSharedView />;
   }
 
   // Show results if user has voted
   if (state.currentPoll && state.hasVoted) {
-    return <PollResults />;
+    return <PollResults isSharedView />;
   }
 
   return null;

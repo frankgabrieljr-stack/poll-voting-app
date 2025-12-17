@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { usePoll } from '../context/PollContext';
 import { useTheme } from '../context/ThemeContext';
 
-const PollVoting: React.FC = () => {
+interface PollVotingProps {
+  isSharedView?: boolean;
+}
+
+const PollVoting: React.FC<PollVotingProps> = () => {
   const { state, vote, setViewMode } = usePoll();
   const { state: themeState } = useTheme();
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
