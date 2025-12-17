@@ -29,7 +29,10 @@ const pollReducer = (state: PollState, action: PollAction): PollState => {
       return {
         ...state,
         currentPoll: action.payload,
-        viewMode: 'vote',
+        // For shared links, keep viewMode as 'shared-poll' so we know
+        // to use the public voting path and continue rendering the
+        // shared poll container. For normal flows, switch to 'vote'.
+        viewMode: state.viewMode === 'shared-poll' ? 'shared-poll' : 'vote',
         hasVoted: false,
       };
     case 'VOTE':
