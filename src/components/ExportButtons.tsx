@@ -50,22 +50,6 @@ const ExportButtons: React.FC = () => {
     return baseClasses;
   };
 
-  const getSecondaryButtonClasses = () => {
-    const { theme } = themeState.design;
-    
-    let baseClasses = 'px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 ';
-    
-    if (theme === 'dark') {
-      baseClasses += 'border-gray-600 text-gray-300 hover:bg-gray-700 focus:ring-gray-500';
-    } else if (theme === 'colorful') {
-      baseClasses += 'border-white/30 text-white hover:bg-white/10 focus:ring-white/50';
-    } else {
-      baseClasses += 'border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-blue-500';
-    }
-    
-    return baseClasses;
-  };
-
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-bold">Export & Share</h3>

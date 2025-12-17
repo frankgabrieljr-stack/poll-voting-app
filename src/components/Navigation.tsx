@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { usePoll } from '../context/PollContext';
 import { useTheme } from '../context/ThemeContext';
 import ExportButtons from './ExportButtons';
+import { generateShareableLink } from '../utils/exportUtils';
 
 interface NavigationProps {
   onSaveClick?: () => void;
@@ -120,6 +121,28 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
   const handleToggleMenu = useCallback(() => {
     setShowUserMenu(prev => !prev);
   }, []);
+
+  const handleShareCurrentPoll = useCallback(() => {
+    if (!state.currentPoll) return;
+
+    const link = generateShareableLink(state.currentPoll);
+
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        alert('Share link copied to clipboard!');
+      })
+      .catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = link;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('Share link copied to clipboard!');
+      });
+  }, [state.currentPoll]);
 
   // Memoize user display name
   const userDisplayName = useMemo(() => {
@@ -276,7 +299,21 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
                   >
                     💾 Save
                   </button>
-                  <ExportButtons />
+
+                  {/* Simple, mobile-friendly share button */}
+                  <button
+                    onClick={handleShareCurrentPoll}
+                    className={buttonClasses}
+                    title="Copy a shareable link to this poll"
+                    type="button"
+                  >
+                    🔗 Share Poll
+                  </button>
+
+                  {/* Full Export & Share panel on larger screens */}
+                  <div className="hidden lg:block">
+                    <ExportButtons />
+                  </div>
                 </>
               )}
             </>
