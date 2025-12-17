@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, serverTimestamp, Timestamp, runTransaction } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, serverTimestamp, Timestamp, runTransaction, onSnapshot } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { db } from '../config/firebase';
 import { Poll, SavedPoll } from '../types/poll.types';
@@ -239,6 +239,53 @@ export const loadPollByIdFromFirestore = async (pollId: string): Promise<SavedPo
     console.error('Error loading poll by ID from Firestore:', error);
     return null;
   }
+};
+
+/**
+ * Subscribe to a single poll document for real-time updates.
+ * Returns an unsubscribe function.
+ */
+export const subscribeToPollById = (
+  pollId: string,
+  onData: (poll: SavedPoll | null) => void,
+  onError?: (error: any) => void
+): (() => void) => {
+  const pollRef = doc(db, 'polls', pollId);
+
+  const unsubscribe = onSnapshot(
+    pollRef,
+    (snapshot) => {
+      if (!snapshot.exists()) {
+        onData(null);
+        return;
+      }
+      const data = snapshot.data();
+      const poll: SavedPoll = {
+        id: snapshot.id,
+        title: data.title || '',
+        description: data.description || '',
+        question: data.question,
+        choices: data.choices || [],
+        createdAt: data.createdAt?.toDate() || new Date(),
+        lastModified: data.lastModified?.toDate() || new Date(),
+        totalVotes: data.totalVotes || 0,
+        design: data.design || { theme: 'designer', primaryColor: '#8f4eff', fontStyle: 'sans', layout: 'card' },
+        backgroundImage: data.backgroundImage || undefined,
+        userId: data.userId,
+        sharedWith: data.sharedWith || [],
+        permissions: data.permissions || {},
+      };
+      onData(poll);
+    },
+    (error) => {
+      console.error('Error subscribing to poll by ID from Firestore:', error);
+      if (onError) {
+        onError(error);
+      }
+    }
+  );
+
+  return unsubscribe;
 };
 
 /**

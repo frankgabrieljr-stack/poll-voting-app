@@ -26,14 +26,14 @@ const initialState: PollState = {
 const pollReducer = (state: PollState, action: PollAction): PollState => {
   switch (action.type) {
     case 'CREATE_POLL':
+      // For shared links, keep viewMode and hasVoted as-is so that real-time
+      // updates don't kick the user out of their current flow (e.g. results view).
+      const isShared = state.viewMode === 'shared-poll';
       return {
         ...state,
         currentPoll: action.payload,
-        // For shared links, keep viewMode as 'shared-poll' so we know
-        // to use the public voting path and continue rendering the
-        // shared poll container. For normal flows, switch to 'vote'.
-        viewMode: state.viewMode === 'shared-poll' ? 'shared-poll' : 'vote',
-        hasVoted: false,
+        viewMode: isShared ? state.viewMode : 'vote',
+        hasVoted: isShared ? state.hasVoted : false,
       };
     case 'VOTE':
       if (!state.currentPoll) return state;

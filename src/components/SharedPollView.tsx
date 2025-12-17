@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { usePoll } from '../context/PollContext';
-import { loadPollByIdFromFirestore } from '../utils/firestoreHelpers';
+import { subscribeToPollById } from '../utils/firestoreHelpers';
 import PollVoting from './PollVoting';
 import PollResults from './PollResults';
 import type { Poll } from '../types/poll.types';
@@ -15,58 +15,50 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    if (!pollId) return;
 
-    const fetchPoll = async () => {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      try {
-        // Load from Firestore using the public/shareable poll ID.
-        const savedPoll = await loadPollByIdFromFirestore(pollId);
-
-        if (!isMounted) return;
-
-        if (savedPoll) {
-          const poll: Poll = {
-            id: savedPoll.id,
-            question: savedPoll.question,
-            choices: savedPoll.choices || [],
-            createdAt: savedPoll.createdAt,
-            design: {
-              ...savedPoll.design,
-              backgroundImage: savedPoll.backgroundImage,
-            },
-            userId: savedPoll.userId,
-            sharedWith: savedPoll.sharedWith,
-            permissions: savedPoll.permissions,
-          };
-
-          createPoll(poll);
-        } else {
+    const unsubscribe = subscribeToPollById(
+      pollId,
+      (savedPoll) => {
+        if (!savedPoll) {
           setError(
             'Poll not found. The link may be invalid, the poll may have been deleted, or you may not have permission to view it.'
           );
+          setLoading(false);
+          return;
         }
-      } catch (err: any) {
-        if (!isMounted) return;
+
+        const poll: Poll = {
+          id: savedPoll.id,
+          question: savedPoll.question,
+          choices: savedPoll.choices || [],
+          createdAt: savedPoll.createdAt,
+          design: {
+            ...savedPoll.design,
+            backgroundImage: savedPoll.backgroundImage,
+          },
+          userId: savedPoll.userId,
+          sharedWith: savedPoll.sharedWith,
+          permissions: savedPoll.permissions,
+        };
+
+        createPoll(poll);
+        setLoading(false);
+      },
+      (err) => {
         console.error('Error loading poll:', err);
         setError(err.message || 'Failed to load poll. Please try again.');
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
-    };
-
-    if (pollId) {
-      fetchPoll();
-    }
+    );
 
     return () => {
-      isMounted = false;
+      unsubscribe();
     };
-  }, [pollId]);
+  }, [pollId, createPoll]);
 
   if (loading) {
     return (
