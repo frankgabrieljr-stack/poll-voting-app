@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, ReactNode, useCallback } from 'react';
 import { Poll, ViewMode } from '../types/poll.types';
 import { useWorkspace } from './WorkspaceContext';
+import { updatePublicPollVotes } from '../utils/firestoreHelpers';
 
 interface PollState {
   currentPoll: Poll | null;
@@ -125,11 +126,22 @@ export const PollProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       choices: updatedChoices,
     };
 
-    // Persist updated votes to the primary storage (Firestore via WorkspaceContext)
-    try {
-      await updatePoll(updatedPoll, updatedPoll.title, updatedPoll.description);
-    } catch (error) {
-      console.error('Failed to persist poll votes to Firestore:', error);
+    // If we're in a public/shared view, allow anyone (even anonymous users) to update
+    // the poll's vote counts directly in Firestore via a dedicated helper that does
+    // not depend on authentication.
+    if (state.viewMode === 'shared-poll') {
+      try {
+        await updatePublicPollVotes(updatedPoll.id, updatedPoll.choices);
+      } catch (error) {
+        console.error('Failed to persist public poll votes to Firestore:', error);
+      }
+    } else {
+      // Normal owner-driven update through Workspace (requires auth and ownership)
+      try {
+        await updatePoll(updatedPoll, updatedPoll.title, updatedPoll.description);
+      } catch (error) {
+        console.error('Failed to persist poll votes to Firestore:', error);
+      }
     }
 
     // Update local voting state

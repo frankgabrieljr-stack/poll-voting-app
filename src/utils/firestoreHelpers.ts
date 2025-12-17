@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { db } from '../config/firebase';
-import { Poll, SavedPoll } from '../types/poll.types';
+import { Poll, SavedPoll, Choice } from '../types/poll.types';
 import { Workspace } from '../types/workspace.types';
 
 /**
@@ -280,6 +280,25 @@ export const updatePollInFirestore = async (poll: Poll, userId: string, _workspa
     });
   } catch (error) {
     console.error('Error updating poll in Firestore:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update votes for a public poll without requiring authentication.
+ * This is used for truly public voting on shared poll links.
+ */
+export const updatePublicPollVotes = async (pollId: string, choices: Choice[]): Promise<void> => {
+  try {
+    const pollRef = doc(db, 'polls', pollId);
+
+    await updateDoc(pollRef, {
+      choices,
+      totalVotes: choices.reduce((sum, choice) => sum + choice.votes, 0),
+      lastModified: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error updating public poll votes in Firestore:', error);
     throw error;
   }
 };
