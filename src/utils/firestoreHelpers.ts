@@ -76,7 +76,9 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
       totalVotes: poll.choices.reduce((sum, choice) => sum + choice.votes, 0),
       sharedWith: poll.sharedWith || [],
       permissions: poll.permissions || {},
-      isPublic: false,
+      // Mark polls as public by default so shared links can be viewed
+      // by participants who are not logged in (frontend still controls creation).
+      isPublic: true,
       shareableLink: `${window.location.origin}/poll/${poll.id}`,
     };
 
