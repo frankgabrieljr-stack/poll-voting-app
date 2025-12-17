@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { usePoll } from '../context/PollContext';
-import { useWorkspace } from '../context/WorkspaceContext';
 import { loadPollByIdFromFirestore } from '../utils/firestoreHelpers';
 import PollVoting from './PollVoting';
 import PollResults from './PollResults';
+import type { Poll } from '../types/poll.types';
 
 interface SharedPollViewProps {
   pollId: string;
@@ -11,21 +11,24 @@ interface SharedPollViewProps {
 
 const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
   const { createPoll, state } = usePoll();
-  const { loadPoll } = useWorkspace();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchPoll = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // Try to load from Firestore first
+        // Load from Firestore using the public/shareable poll ID.
         const savedPoll = await loadPollByIdFromFirestore(pollId);
-        
+
+        if (!isMounted) return;
+
         if (savedPoll) {
-          const poll = {
+          const poll: Poll = {
             id: savedPoll.id,
             question: savedPoll.question,
             choices: savedPoll.choices || [],
@@ -38,32 +41,32 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
             sharedWith: savedPoll.sharedWith,
             permissions: savedPoll.permissions,
           };
+
           createPoll(poll);
-          setLoading(false);
-          return;
+        } else {
+          setError(
+            'Poll not found. The link may be invalid, the poll may have been deleted, or you may not have permission to view it.'
+          );
         }
-
-        // Fallback to local load
-        const localPoll = await loadPoll(pollId);
-        if (localPoll) {
-          createPoll(localPoll);
-          setLoading(false);
-          return;
-        }
-
-        setError('Poll not found. The link may be invalid or the poll may have been deleted.');
-        setLoading(false);
       } catch (err: any) {
+        if (!isMounted) return;
         console.error('Error loading poll:', err);
         setError(err.message || 'Failed to load poll. Please try again.');
-        setLoading(false);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     if (pollId) {
       fetchPoll();
     }
-  }, [pollId, createPoll, loadPoll]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [pollId, createPoll]);
 
   if (loading) {
     return (
