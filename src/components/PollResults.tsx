@@ -153,21 +153,6 @@ const PollResults: React.FC = () => {
     return {};
   };
 
-  const getResultCardClasses = () => {
-    // Designer theme: White/off-white cards
-    return 'p-6 rounded-xl transition-all duration-300 hover:scale-105 bg-[#fafaff] border border-[#8f4eff]/10 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)]';
-  };
-
-  const getProgressBarClasses = () => {
-    // Designer theme: Light background for progress bar
-    return 'h-4 rounded-full transition-all duration-500 bg-[#8f4eff]/10';
-  };
-
-  const getProgressFillClasses = () => {
-    // Designer theme: Gradient fill
-    return 'h-full rounded-full transition-all duration-500 bg-gradient-to-r from-[#8f4eff] to-[#18e6c1]';
-  };
-
   const getButtonClasses = () => {
     // Designer theme: Gradient buttons
     return 'px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white hover:from-[#a366ff] hover:to-[#2ef9d8] focus:ring-[#8f4eff] shadow-lg';
