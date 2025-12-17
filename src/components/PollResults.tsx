@@ -279,21 +279,19 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
           </div>
         </div>
 
-        {/* Auto-Advance Toggle */}
-        {!isSharedView && (
-          <div className="mb-6 flex justify-center">
-            <button
-              onClick={toggleAutoAdvance}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 ${
-                autoAdvanceEnabled 
-                  ? 'bg-gradient-to-r from-[#18e6c1] to-[#2ef9d8] text-white border-[#18e6c1] shadow-lg' 
-                  : 'bg-[#fafaff] text-[#8f4eff] border-[#8f4eff] shadow-md'
-              }`}
-            >
-              {autoAdvanceEnabled ? '⏸️ Pause Auto-Advance' : '▶️ Enable Auto-Advance (3s)'}
-            </button>
-          </div>
-        )}
+        {/* Auto-Advance Toggle (available in both owner and shared views) */}
+        <div className="mb-6 flex justify-center">
+          <button
+            onClick={toggleAutoAdvance}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 ${
+              autoAdvanceEnabled 
+                ? 'bg-gradient-to-r from-[#18e6c1] to-[#2ef9d8] text-white border-[#18e6c1] shadow-lg' 
+                : 'bg-[#fafaff] text-[#8f4eff] border-[#8f4eff] shadow-md'
+            }`}
+          >
+            {autoAdvanceEnabled ? '⏸️ Pause Auto-Advance' : '▶️ Enable Auto-Advance (3s)'}
+          </button>
+        </div>
 
         {/* Action Buttons */}
         {!isSharedView && (
