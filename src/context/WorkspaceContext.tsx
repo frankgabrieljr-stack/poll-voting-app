@@ -98,7 +98,7 @@ const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefin
 export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(workspaceReducer, initialState);
   const { currentUser } = useAuth();
-  const { getCurrentWorkspace } = useWorkspaceManager();
+  const { getCurrentWorkspace, updateWorkspace } = useWorkspaceManager();
 
   // Load polls when user logs in
   useEffect(() => {
@@ -196,6 +196,18 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
         dispatch({ type: 'UPDATE_POLL', payload: savedPoll });
       } else {
         dispatch({ type: 'SAVE_POLL', payload: savedPoll });
+
+        // Increment workspace pollCount for the current workspace
+        if (workspace) {
+          try {
+            await updateWorkspace({
+              ...workspace,
+              pollCount: (workspace.pollCount || 0) + 1,
+            });
+          } catch (err) {
+            console.error('Failed to update workspace pollCount after saving poll:', err);
+          }
+        }
       }
     } catch (error: any) {
       console.error('Failed to save poll:', error);
@@ -249,8 +261,22 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
+      const workspace = getCurrentWorkspace();
+
       await deletePollFromFirestore(pollId, currentUser.uid);
       dispatch({ type: 'DELETE_POLL', payload: pollId });
+
+      // Decrement workspace pollCount for the current workspace
+      if (workspace && workspace.pollCount > 0) {
+        try {
+          await updateWorkspace({
+            ...workspace,
+            pollCount: workspace.pollCount - 1,
+          });
+        } catch (err) {
+          console.error('Failed to update workspace pollCount after deleting poll:', err);
+        }
+      }
     } catch (error: any) {
       console.error('Failed to delete poll:', error);
       dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to delete poll' });
