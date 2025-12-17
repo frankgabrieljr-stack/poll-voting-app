@@ -176,81 +176,79 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
         <div className="flex items-center space-x-3">
           {/* User Profile Dropdown - Always visible when logged in */}
           {currentUser && (
-            <div className="relative user-menu-container">
-              <button
-                onClick={handleToggleMenu}
-                className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#8f4eff]/20 to-[#18e6c1]/20 backdrop-blur-sm hover:from-[#8f4eff]/30 hover:to-[#18e6c1]/30 border border-[#8f4eff]/30 transition-all focus:outline-none focus:ring-2 focus:ring-[#8f4eff] cursor-pointer pointer-events-auto shadow-md"
-                type="button"
-              >
-                <span className="text-white font-semibold">
-                  {userDisplayName}
-                </span>
-                {userData?.role === 'admin' && (
-                  <span className="px-2 py-1 bg-gradient-to-r from-[#ff6363] to-[#ff8a8a] text-white text-xs font-bold rounded-lg shadow-sm">
-                    ADMIN
+            <>
+              <div className="relative user-menu-container">
+                <button
+                  onClick={handleToggleMenu}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#8f4eff]/20 to-[#18e6c1]/20 backdrop-blur-sm hover:from-[#8f4eff]/30 hover:to-[#18e6c1]/30 border border-[#8f4eff]/30 transition-all focus:outline-none focus:ring-2 focus:ring-[#8f4eff] cursor-pointer pointer-events-auto shadow-md"
+                  type="button"
+                >
+                  <span className="text-white font-semibold">
+                    {userDisplayName}
                   </span>
-                )}
-                <span className="text-white">▼</span>
-              </button>
-              
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-[#fafaff] rounded-xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] z-[100] border border-[#8f4eff]/20 overflow-hidden">
-                  <div className="py-2">
-                    <div className="px-4 py-2 border-b border-[#8f4eff]/10 bg-gradient-to-r from-[#8f4eff]/5 to-[#18e6c1]/5">
-                      <p className="text-sm font-semibold text-[#1a1a2e]">
-                        {userDisplayName}
-                      </p>
-                      <p className="text-xs text-[#4a4a6a] truncate">
-                        {currentUser.email}
-                      </p>
-                    </div>
-                    
-                    <button
-                      onClick={() => handleNavigate('workspace')}
-                      className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#8f4eff]/10 hover:to-[#18e6c1]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
-                      type="button"
-                    >
-                      <span>📊</span>
-                      <span>My Polls</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => handleNavigate('settings')}
-                      className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#8f4eff]/10 hover:to-[#18e6c1]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
-                      type="button"
-                    >
-                      <span>⚙️</span>
-                      <span>Account Settings</span>
-                    </button>
-                    
-                    {userData?.role === 'admin' && (
+                  {userData?.role === 'admin' && (
+                    <span className="px-2 py-1 bg-gradient-to-r from-[#ff6363] to-[#ff8a8a] text-white text-xs font-bold rounded-lg shadow-sm">
+                      ADMIN
+                    </span>
+                  )}
+                  <span className="text-white">▼</span>
+                </button>
+                
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-56 bg-[#fafaff] rounded-xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] z-[100] border border-[#8f4eff]/20 overflow-hidden">
+                    <div className="py-2">
+                      <div className="px-4 py-2 border-b border-[#8f4eff]/10 bg-gradient-to-r from-[#8f4eff]/5 to-[#18e6c1]/5">
+                        <p className="text-sm font-semibold text-[#1a1a2e]">
+                          {userDisplayName}
+                        </p>
+                        <p className="text-xs text-[#4a4a6a] truncate">
+                          {currentUser.email}
+                        </p>
+                      </div>
+                      
                       <button
-                        onClick={() => handleNavigate('admin')}
+                        onClick={() => handleNavigate('workspace')}
                         className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#8f4eff]/10 hover:to-[#18e6c1]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
                         type="button"
                       >
-                        <span>👑</span>
-                        <span>Admin Dashboard</span>
+                        <span>📊</span>
+                        <span>My Polls</span>
                       </button>
-                    )}
-                    
-                    <hr className="my-2 border-[#8f4eff]/10" />
-                    
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleLogout();
-                      }}
-                      className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#ff6363]/10 hover:to-[#ff8a8a]/10 text-[#ff6363] font-semibold transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
-                      type="button"
-                    >
-                      <span>🚪</span>
-                      <span>Log Out</span>
-                    </button>
+                      
+                      <button
+                        onClick={() => handleNavigate('settings')}
+                        className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#8f4eff]/10 hover:to-[#18e6c1]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
+                        type="button"
+                      >
+                        <span>⚙️</span>
+                        <span>Account Settings</span>
+                      </button>
+                      
+                      {userData?.role === 'admin' && (
+                        <button
+                          onClick={() => handleNavigate('admin')}
+                          className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#8f4eff]/10 hover:to-[#18e6c1]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
+                          type="button"
+                        >
+                          <span>👑</span>
+                          <span>Admin Dashboard</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+
+              {/* Always-visible Log Out button so users can sign out even if the menu has issues */}
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-[#ff6363] to-[#ff8a8a] text-white shadow-md"
+                type="button"
+                title="Log out of your account"
+              >
+                🚪 Log Out
+              </button>
+            </>
           )}
 
           {/* Navigation Buttons - Show on all pages except login/register */}
