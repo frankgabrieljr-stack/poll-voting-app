@@ -7,6 +7,7 @@ interface PollState {
   currentPoll: Poll | null;
   viewMode: ViewMode;
   hasVoted: boolean;
+  lastUpdatedAt?: Date;
 }
 
 type PollAction =
@@ -21,6 +22,7 @@ const initialState: PollState = {
   currentPoll: null,
   viewMode: 'landing',
   hasVoted: false,
+  lastUpdatedAt: undefined,
 };
 
 const pollReducer = (state: PollState, action: PollAction): PollState => {
@@ -34,6 +36,7 @@ const pollReducer = (state: PollState, action: PollAction): PollState => {
         currentPoll: action.payload,
         viewMode: isShared ? state.viewMode : 'vote',
         hasVoted: isShared ? state.hasVoted : false,
+        lastUpdatedAt: action.payload.lastUpdatedAt || new Date(),
       };
     case 'VOTE':
       if (!state.currentPoll) return state;
@@ -54,6 +57,7 @@ const pollReducer = (state: PollState, action: PollAction): PollState => {
         currentPoll: updatedPoll,
         hasVoted: true,
         viewMode: 'results',
+        lastUpdatedAt: new Date(),
       };
     case 'SET_VIEW_MODE':
       return {

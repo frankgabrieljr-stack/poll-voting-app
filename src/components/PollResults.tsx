@@ -18,6 +18,11 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
   const results = generatePollResults(poll);
   const totalVotes = poll.choices.reduce((sum, choice) => sum + choice.votes, 0);
 
+  const lastUpdated = state.lastUpdatedAt || poll.lastUpdatedAt || poll.createdAt;
+  const lastUpdatedLabel = lastUpdated
+    ? lastUpdated.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+    : null;
+
   // Data for single pie chart + grid
   const chartColors = ['#8f4eff', '#18e6c1', '#f97316', '#ec4899', '#3b82f6', '#10b981', '#facc15', '#6366f1'];
   const chartData = poll.choices.map((choice, index) => {
@@ -192,6 +197,11 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
               </p>
             )}
           </div>
+          {lastUpdatedLabel && (
+            <p className="text-sm text-white/80">
+              Last updated: <span className="font-semibold">{lastUpdatedLabel}</span>
+            </p>
+          )}
         </div>
 
         {/* Vote Again Button - Prominent and Tablet-Friendly */}

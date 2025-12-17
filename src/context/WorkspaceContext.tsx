@@ -295,6 +295,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
           question: savedPoll.question,
           choices: savedPoll.choices || [],
           createdAt: savedPoll.createdAt,
+          lastUpdatedAt: savedPoll.lastModified,
           design: {
             ...savedPoll.design,
             backgroundImage: savedPoll.backgroundImage,
@@ -313,6 +314,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
           question: localPoll.question,
           choices: localPoll.choices || [],
           createdAt: localPoll.createdAt,
+          lastUpdatedAt: localPoll.lastModified,
           design: {
             ...localPoll.design,
             backgroundImage: localPoll.backgroundImage,

@@ -17,6 +17,7 @@ export interface Poll {
   question: string;
   choices: Choice[];
   createdAt: Date;
+  lastUpdatedAt?: Date;
   design: DesignOptions;
   title?: string; // Optional title for workspace management
   description?: string; // Optional description
