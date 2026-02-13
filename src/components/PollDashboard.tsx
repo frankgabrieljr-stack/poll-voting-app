@@ -71,7 +71,7 @@ const PollDashboard: React.FC = () => {
 
   const getCardClasses = () => {
     // Designer theme: White/off-white cards with shadows
-    return 'p-6 rounded-xl transition-all duration-300 hover:scale-105 bg-[#fafaff] border border-[#8f4eff]/10 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)]';
+    return 'p-6 rounded-xl transition-all duration-300 hover:scale-105 bg-[#fafaff] border border-[#16a34a]/10 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)]';
   };
 
   const handleLoadPoll = (savedPoll: SavedPoll) => {
@@ -124,6 +124,22 @@ const PollDashboard: React.FC = () => {
     }
   };
 
+  const handleShareHostPoll = async (pollId: string) => {
+    const hostUrl = `${window.location.origin}/poll/${pollId}/host`;
+    try {
+      await navigator.clipboard.writeText(hostUrl);
+      alert('Host dashboard link copied! This owner-only link opens live results.');
+    } catch (error) {
+      const textArea = document.createElement('textarea');
+      textArea.value = hostUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('Host dashboard link copied! This owner-only link opens live results.');
+    }
+  };
+
   const handleDeletePoll = async (pollId: string) => {
     try {
       await deletePoll(pollId);
@@ -158,7 +174,7 @@ const PollDashboard: React.FC = () => {
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           <button
             onClick={() => setViewMode('create')}
-            className="px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 text-white shadow-xl bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8]"
+            className="px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 text-white shadow-xl bg-gradient-to-r from-[#16a34a] to-[#34d399] hover:from-[#22c55e] hover:to-[#6ee7b7]"
             title="Make a new poll"
           >
             <span className="flex items-center justify-center space-x-2">
@@ -169,7 +185,7 @@ const PollDashboard: React.FC = () => {
           
           <button
             onClick={() => setShowCreateWorkspace(true)}
-            className="px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] border border-[#8f4eff]/20 text-[#1a1a2e] shadow-lg"
+            className="px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] border border-[#16a34a]/20 text-[#1a1a2e] shadow-lg"
             title="Create a new workspace"
           >
             <span className="flex items-center justify-center space-x-2">
@@ -180,7 +196,7 @@ const PollDashboard: React.FC = () => {
           
           <button
             onClick={loadPolls}
-            className="px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] border border-[#8f4eff]/20 text-[#1a1a2e] shadow-lg"
+            className="px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] border border-[#16a34a]/20 text-[#1a1a2e] shadow-lg"
             title="Reload your polls list"
           >
             <span className="flex items-center justify-center space-x-2">
@@ -192,12 +208,12 @@ const PollDashboard: React.FC = () => {
 
         {/* Workspace Selector */}
         {workspaceManagerState.workspaces.length > 1 && (
-          <div className="mb-6 bg-[#fafaff] rounded-xl p-4 shadow-lg border border-[#8f4eff]/10">
+          <div className="mb-6 bg-[#fafaff] rounded-xl p-4 shadow-lg border border-[#16a34a]/10">
             <label className="block text-sm font-bold text-[#1a1a2e] mb-2">Current Workspace:</label>
             <select
               value={workspaceManagerState.currentWorkspaceId || ''}
               onChange={(e) => setCurrentWorkspace(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border-2 border-[#8f4eff]/20 focus:outline-none focus:ring-2 focus:ring-[#8f4eff] focus:border-[#8f4eff] text-[#1a1a2e] font-semibold bg-[#fafaff]"
+              className="w-full px-4 py-2 rounded-lg border-2 border-[#16a34a]/20 focus:outline-none focus:ring-2 focus:ring-[#16a34a] focus:border-[#16a34a] text-[#1a1a2e] font-semibold bg-[#fafaff]"
             >
               {workspaceManagerState.workspaces.map((workspace) => (
                 <option key={workspace.id} value={workspace.id}>
@@ -232,7 +248,7 @@ const PollDashboard: React.FC = () => {
                   <div className="flex flex-col gap-2">
                     <button
                       onClick={() => handleLoadPoll(poll)}
-                      className="px-4 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 text-white shadow-lg text-sm bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8]"
+                      className="px-4 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 text-white shadow-lg text-sm bg-gradient-to-r from-[#16a34a] to-[#34d399] hover:from-[#22c55e] hover:to-[#6ee7b7]"
                       title="Open this poll to vote"
                     >
                       🚀 Open Poll
@@ -246,7 +262,7 @@ const PollDashboard: React.FC = () => {
 
         {/* Search and Sort Controls */}
         {workspaceState.savedPolls.length > 0 && (
-          <div className="mb-6 bg-[#fafaff] rounded-xl p-4 shadow-lg border border-[#8f4eff]/10">
+          <div className="mb-6 bg-[#fafaff] rounded-xl p-4 shadow-lg border border-[#16a34a]/10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Search */}
               <div>
@@ -256,7 +272,7 @@ const PollDashboard: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Type to search by question..."
-                  className="w-full px-4 py-2 rounded-lg border-2 border-[#8f4eff]/20 focus:outline-none focus:ring-2 focus:ring-[#8f4eff] focus:border-[#8f4eff] text-[#1a1a2e] bg-[#fafaff]"
+                  className="w-full px-4 py-2 rounded-lg border-2 border-[#16a34a]/20 focus:outline-none focus:ring-2 focus:ring-[#16a34a] focus:border-[#16a34a] text-[#1a1a2e] bg-[#fafaff]"
                 />
               </div>
 
@@ -266,7 +282,7 @@ const PollDashboard: React.FC = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="w-full px-4 py-2 rounded-lg border-2 border-[#8f4eff]/20 focus:outline-none focus:ring-2 focus:ring-[#8f4eff] focus:border-[#8f4eff] text-[#1a1a2e] font-semibold bg-[#fafaff]"
+                  className="w-full px-4 py-2 rounded-lg border-2 border-[#16a34a]/20 focus:outline-none focus:ring-2 focus:ring-[#16a34a] focus:border-[#16a34a] text-[#1a1a2e] font-semibold bg-[#fafaff]"
                 >
                   <option value="recent">Most Recent</option>
                   <option value="votes">Most Votes</option>
@@ -284,7 +300,7 @@ const PollDashboard: React.FC = () => {
             <p className="text-lg text-white font-semibold">Loading polls...</p>
           </div>
         ) : filteredAndSortedPolls.length === 0 ? (
-          <div className="text-center py-16 bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] border border-[#8f4eff]/10 max-w-2xl mx-auto">
+          <div className="text-center py-16 bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] border border-[#16a34a]/10 max-w-2xl mx-auto">
             <div className="text-7xl mb-6">📊</div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 text-[#1a1a2e]">
               {searchTerm ? 'No polls found!' : 'No polls yet!'}
@@ -297,7 +313,7 @@ const PollDashboard: React.FC = () => {
             {!searchTerm && (
               <button
                 onClick={() => setViewMode('create')}
-                className="px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 text-white shadow-xl bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8]"
+                className="px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 text-white shadow-xl bg-gradient-to-r from-[#16a34a] to-[#34d399] hover:from-[#22c55e] hover:to-[#6ee7b7]"
                 title="Create your first poll"
               >
                 <span className="flex items-center justify-center space-x-2">
@@ -344,16 +360,16 @@ const PollDashboard: React.FC = () => {
                 <div className="flex flex-col gap-2">
                   <button
                     onClick={() => handleLoadPoll(poll)}
-                    className="px-4 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 text-white shadow-lg text-sm bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8]"
+                    className="px-4 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 text-white shadow-lg text-sm bg-gradient-to-r from-[#16a34a] to-[#34d399] hover:from-[#22c55e] hover:to-[#6ee7b7]"
                     title="Open this poll to vote"
                   >
                     🚀 Open Poll
                   </button>
                   
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => handleViewResults(poll)}
-                      className="px-3 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8] text-white text-xs shadow-lg"
+                      className="px-3 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 bg-gradient-to-r from-[#16a34a] to-[#34d399] hover:from-[#22c55e] hover:to-[#6ee7b7] text-white text-xs shadow-lg"
                       title="View poll results"
                     >
                       📊 Results
@@ -361,10 +377,18 @@ const PollDashboard: React.FC = () => {
                     
                     <button
                       onClick={() => handleSharePoll(poll.id)}
-                      className="px-3 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 bg-gradient-to-r from-[#18e6c1] to-[#2ef9d8] hover:from-[#2ef9d8] hover:to-[#4ef9e8] text-white text-xs shadow-lg"
+                      className="px-3 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 bg-gradient-to-r from-[#34d399] to-[#6ee7b7] hover:from-[#6ee7b7] hover:to-[#a7f3d0] text-white text-xs shadow-lg"
                       title="Share this poll"
                     >
                       🔗 Share
+                    </button>
+
+                    <button
+                      onClick={() => handleShareHostPoll(poll.id)}
+                      className="px-3 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 bg-gradient-to-r from-[#15803d] to-[#34d399] hover:from-[#16a34a] hover:to-[#6ee7b7] text-white text-xs shadow-lg"
+                      title="Copy host dashboard link"
+                    >
+                      🎛️ Host
                     </button>
                   </div>
                   
@@ -392,7 +416,7 @@ const PollDashboard: React.FC = () => {
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setShowDeleteConfirm(null)}
-                  className="px-6 py-3 border-2 border-[#8f4eff]/30 rounded-lg hover:bg-[#f0f0ff] font-bold text-[#1a1a2e] transition-all duration-200 bg-[#fafaff] shadow-md"
+                  className="px-6 py-3 border-2 border-[#16a34a]/30 rounded-lg hover:bg-[#eefcf4] font-bold text-[#1a1a2e] transition-all duration-200 bg-[#fafaff] shadow-md"
                   title="Keep this poll"
                 >
                   Cancel

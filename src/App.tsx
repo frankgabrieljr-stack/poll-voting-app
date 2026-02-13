@@ -16,6 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import EmailVerificationBanner from './components/EmailVerificationBanner';
 import Navigation from './components/Navigation';
 import SharedPollView from './components/SharedPollView';
+import HostPollView from './components/HostPollView';
 import { usePoll } from './context/PollContext';
 import { useTheme } from './context/ThemeContext';
 
@@ -32,21 +33,31 @@ const AppContent: React.FC = () => {
   const { currentUser, loading: authLoading } = useAuth();
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [sharedPollId, setSharedPollId] = useState<string | null>(null);
+  const [hostPollId, setHostPollId] = useState<string | null>(null);
 
   // Check for poll ID in URL (for sharing)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const pollParam = urlParams.get('poll');
-    const pathPollId = window.location.pathname.split('/poll/')[1];
-    
-    if (pollParam) {
+    const pathname = window.location.pathname;
+    const hostMatch = pathname.match(/^\/poll\/([^/]+)\/host\/?$/);
+    const sharedMatch = pathname.match(/^\/poll\/([^/]+)\/?$/);
+
+    if (hostMatch) {
+      setHostPollId(hostMatch[1]);
+      setSharedPollId(null);
+      setViewMode('host-poll');
+    } else if (pollParam) {
       setSharedPollId(pollParam);
+      setHostPollId(null);
       setViewMode('shared-poll');
-    } else if (pathPollId) {
-      setSharedPollId(pathPollId);
+    } else if (sharedMatch) {
+      setSharedPollId(sharedMatch[1]);
+      setHostPollId(null);
       setViewMode('shared-poll');
     } else {
       setSharedPollId(null);
+      setHostPollId(null);
     }
   }, [setViewMode]);
 
@@ -62,7 +73,7 @@ const AppContent: React.FC = () => {
         baseClasses += 'bg-gray-900 text-white';
         break;
       case 'colorful':
-        baseClasses += 'bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 text-white';
+        baseClasses += 'bg-gradient-to-br from-emerald-400 via-green-500 to-lime-500 text-white';
         break;
       case 'designer':
         // New designer theme: Navy background
@@ -91,6 +102,14 @@ const AppContent: React.FC = () => {
   // Memoize current view to prevent unnecessary re-renders
   const currentView = useMemo(() => {
     // Handle shared poll view
+    if (state.viewMode === 'host-poll' && hostPollId) {
+      return (
+        <ProtectedRoute>
+          <HostPollView pollId={hostPollId} />
+        </ProtectedRoute>
+      );
+    }
+
     if (state.viewMode === 'shared-poll' && sharedPollId) {
       return <SharedPollView pollId={sharedPollId} />;
     }
@@ -143,7 +162,7 @@ const AppContent: React.FC = () => {
       default:
         return <MemoizedLandingPage />;
     }
-  }, [state.viewMode, sharedPollId]);
+  }, [state.viewMode, sharedPollId, hostPollId]);
   
   // Memoize save modal handlers to prevent recreation
   const handleSaveClick = useCallback(() => {
@@ -164,7 +183,7 @@ const AppContent: React.FC = () => {
   // or fails to initialize in some browsers.
   if (authLoading && state.viewMode !== 'shared-poll') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-400 via-green-500 to-lime-500">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-white font-semibold">Loading...</p>

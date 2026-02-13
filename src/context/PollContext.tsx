@@ -30,12 +30,12 @@ const pollReducer = (state: PollState, action: PollAction): PollState => {
     case 'CREATE_POLL':
       // For shared links, keep viewMode and hasVoted as-is so that real-time
       // updates don't kick the user out of their current flow (e.g. results view).
-      const isShared = state.viewMode === 'shared-poll';
+      const isSharedOrHost = state.viewMode === 'shared-poll' || state.viewMode === 'host-poll';
       return {
         ...state,
         currentPoll: action.payload,
-        viewMode: isShared ? state.viewMode : 'vote',
-        hasVoted: isShared ? state.hasVoted : false,
+        viewMode: isSharedOrHost ? state.viewMode : 'vote',
+        hasVoted: isSharedOrHost ? state.hasVoted : false,
         lastUpdatedAt: action.payload.lastUpdatedAt || new Date(),
       };
     case 'VOTE':
@@ -56,7 +56,8 @@ const pollReducer = (state: PollState, action: PollAction): PollState => {
         ...state,
         currentPoll: updatedPoll,
         hasVoted: true,
-        viewMode: 'results',
+        // Keep shared links in voter-only mode (no results page for participants).
+        viewMode: state.viewMode === 'shared-poll' ? 'shared-poll' : 'results',
         lastUpdatedAt: new Date(),
       };
     case 'SET_VIEW_MODE':

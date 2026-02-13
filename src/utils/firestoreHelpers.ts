@@ -59,7 +59,7 @@ export const savePollToFirestore = async (poll: Poll, userId: string, workspaceI
     // Normalize design so we never send undefined fields to Firestore
     const rawDesign = poll.design || {
       theme: 'designer',
-      primaryColor: '#8f4eff',
+      primaryColor: '#16a34a',
       fontStyle: 'sans',
       layout: 'card',
     };
@@ -156,7 +156,7 @@ export const loadPollsFromFirestore = async (userId: string, workspaceId?: strin
         createdAt: data.createdAt?.toDate() || new Date(),
         lastModified: data.lastModified?.toDate() || new Date(),
         totalVotes: data.totalVotes || 0,
-        design: data.design || { theme: 'designer', primaryColor: '#8f4eff', fontStyle: 'sans', layout: 'card' },
+        design: data.design || { theme: 'designer', primaryColor: '#16a34a', fontStyle: 'sans', layout: 'card' },
         backgroundImage: data.backgroundImage || undefined,
         userId: data.userId,
         sharedWith: data.sharedWith || [],
@@ -193,7 +193,7 @@ export const loadSharedPollsFromFirestore = async (userEmail: string): Promise<S
         createdAt: data.createdAt?.toDate() || new Date(),
         lastModified: data.lastModified?.toDate() || new Date(),
         totalVotes: data.totalVotes || 0,
-        design: data.design || { theme: 'designer', primaryColor: '#8f4eff', fontStyle: 'sans', layout: 'card' },
+        design: data.design || { theme: 'designer', primaryColor: '#16a34a', fontStyle: 'sans', layout: 'card' },
         backgroundImage: data.backgroundImage || undefined,
         userId: data.userId,
         sharedWith: data.sharedWith || [],
@@ -227,7 +227,7 @@ export const loadPollByIdFromFirestore = async (pollId: string): Promise<SavedPo
         createdAt: data.createdAt?.toDate() || new Date(),
         lastModified: data.lastModified?.toDate() || new Date(),
         totalVotes: data.totalVotes || 0,
-        design: data.design || { theme: 'designer', primaryColor: '#8f4eff', fontStyle: 'sans', layout: 'card' },
+        design: data.design || { theme: 'designer', primaryColor: '#16a34a', fontStyle: 'sans', layout: 'card' },
         backgroundImage: data.backgroundImage || undefined,
         userId: data.userId,
         sharedWith: data.sharedWith || [],
@@ -269,7 +269,7 @@ export const subscribeToPollById = (
         createdAt: data.createdAt?.toDate() || new Date(),
         lastModified: data.lastModified?.toDate() || new Date(),
         totalVotes: data.totalVotes || 0,
-        design: data.design || { theme: 'designer', primaryColor: '#8f4eff', fontStyle: 'sans', layout: 'card' },
+        design: data.design || { theme: 'designer', primaryColor: '#16a34a', fontStyle: 'sans', layout: 'card' },
         backgroundImage: data.backgroundImage || undefined,
         userId: data.userId,
         sharedWith: data.sharedWith || [],
@@ -304,7 +304,7 @@ export const updatePollInFirestore = async (poll: Poll, userId: string, _workspa
     // Normalize design to avoid undefined values
     const rawDesign = poll.design || {
       theme: 'designer',
-      primaryColor: '#8f4eff',
+      primaryColor: '#16a34a',
       fontStyle: 'sans',
       layout: 'card',
     };
@@ -466,7 +466,7 @@ export const loadWorkspacesFromFirestore = async (userId: string): Promise<Works
         id: doc.id,
         name: data.name,
         description: data.description || '',
-        color: data.color || '#8f4eff',
+        color: data.color || '#16a34a',
         icon: data.icon || '📊',
         createdAt: data.createdAt?.toDate() || new Date(),
         lastModified: data.lastModified?.toDate() || new Date(),

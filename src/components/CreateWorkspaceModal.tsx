@@ -10,7 +10,7 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
   const { createWorkspace } = useWorkspaceManager();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [color, setColor] = useState('#8f4eff');
+  const [color, setColor] = useState('#16a34a');
   const [icon, setIcon] = useState('📊');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
       // Reset form
       setName('');
       setDescription('');
-      setColor('#8f4eff');
+      setColor('#16a34a');
       setIcon('📊');
       onClose();
     } catch (err: any) {
@@ -50,7 +50,7 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
       onClick={onClose}
     >
       <div
-        className="bg-[#fafaff] rounded-2xl shadow-2xl max-w-md w-full border border-[#8f4eff]/20"
+        className="bg-[#fafaff] rounded-2xl shadow-2xl max-w-md w-full border border-[#16a34a]/20"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
@@ -58,7 +58,7 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
             <h2 className="text-2xl font-bold text-[#1a1a2e]">Create New Workspace</h2>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-[#8f4eff]/10 hover:bg-[#8f4eff]/20 flex items-center justify-center transition-all text-[#8f4eff] font-bold"
+              className="w-8 h-8 rounded-full bg-[#16a34a]/10 hover:bg-[#16a34a]/20 flex items-center justify-center transition-all text-[#16a34a] font-bold"
             >
               ×
             </button>
@@ -80,7 +80,7 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg border-2 border-[#8f4eff]/20 focus:border-[#8f4eff] focus:outline-none text-[#1a1a2e]"
+                className="w-full px-4 py-3 rounded-lg border-2 border-[#16a34a]/20 focus:border-[#16a34a] focus:outline-none text-[#1a1a2e]"
                 placeholder="e.g., Marketing Team"
                 style={{ color: '#1a1a1a', fontSize: '16px' }}
               />
@@ -93,7 +93,7 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border-2 border-[#8f4eff]/20 focus:border-[#8f4eff] focus:outline-none text-[#1a1a2e]"
+                className="w-full px-4 py-3 rounded-lg border-2 border-[#16a34a]/20 focus:border-[#16a34a] focus:outline-none text-[#1a1a2e]"
                 placeholder="Describe this workspace..."
                 rows={3}
                 style={{ color: '#1a1a1a', fontSize: '16px' }}
@@ -108,7 +108,7 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
                 type="color"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                className="w-full h-12 rounded-lg border-2 border-[#8f4eff]/20 cursor-pointer"
+                className="w-full h-12 rounded-lg border-2 border-[#16a34a]/20 cursor-pointer"
               />
             </div>
 
@@ -124,8 +124,8 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
                     onClick={() => setIcon(ic)}
                     className={`w-12 h-12 text-2xl rounded-lg border-2 transition-all ${
                       icon === ic
-                        ? 'border-[#8f4eff] bg-[#8f4eff]/10 scale-110'
-                        : 'border-[#8f4eff]/20 hover:border-[#8f4eff]/40'
+                        ? 'border-[#16a34a] bg-[#16a34a]/10 scale-110'
+                        : 'border-[#16a34a]/20 hover:border-[#16a34a]/40'
                     }`}
                   >
                     {ic}
@@ -145,7 +145,7 @@ const CreateWorkspaceModal: React.FC<CreateWorkspaceModalProps> = ({ isOpen, onC
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white rounded-lg font-bold hover:from-[#a366ff] hover:to-[#2ef9d8] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white rounded-lg font-bold hover:from-[#22c55e] hover:to-[#6ee7b7] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
                 {loading ? 'Creating...' : 'Create Workspace'}
               </button>

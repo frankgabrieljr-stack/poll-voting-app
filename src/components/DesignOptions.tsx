@@ -4,16 +4,16 @@ import { useTheme } from '../context/ThemeContext';
 const DesignOptions: React.FC = () => {
   const { state, setTheme, setPrimaryColor, setFontStyle, setLayout } = useTheme();
   const quickColors = [
-    '#8f4eff',
-    '#22d3ee',
-    '#f97316',
-    '#ec4899',
+    '#16a34a',
+    '#34d399',
+    '#22c55e',
+    '#10b981',
     '#84cc16',
-    '#06b6d4',
-    '#f43f5e',
-    '#6366f1',
+    '#65a30d',
+    '#15803d',
     '#14b8a6',
-    '#f59e0b',
+    '#0f766e',
+    '#22d3ee',
   ];
 
   const getThemeClasses = () => {

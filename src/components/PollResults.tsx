@@ -4,9 +4,10 @@ import { generatePollResults } from '../utils/exportUtils';
 
 interface PollResultsProps {
   isSharedView?: boolean;
+  isHostView?: boolean;
 }
 
-const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
+const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false, isHostView = false }) => {
   const { state, setViewMode, resetPoll, resetVotingState } = usePoll();
   const [showSuccessMessage, setShowSuccessMessage] = useState(true);
   const [autoAdvanceEnabled, setAutoAdvanceEnabled] = useState(false);
@@ -24,7 +25,7 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
     : null;
 
   // Data for single pie chart + grid
-  const chartColors = ['#8f4eff', '#18e6c1', '#f97316', '#ec4899', '#3b82f6', '#10b981', '#facc15', '#6366f1'];
+  const chartColors = ['#16a34a', '#34d399', '#84cc16', '#22c55e', '#10b981', '#65a30d', '#15803d', '#4ade80'];
   const chartData = poll.choices.map((choice, index) => {
     const result = results.results.find(r => r.choice === choice.text);
     const percentage = result?.percentage || 0;
@@ -164,7 +165,7 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
 
   const getButtonClasses = () => {
     // Designer theme: Gradient buttons
-    return 'px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white hover:from-[#a366ff] hover:to-[#2ef9d8] focus:ring-[#8f4eff] shadow-lg';
+    return 'px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white hover:from-[#22c55e] hover:to-[#6ee7b7] focus:ring-[#16a34a] shadow-lg';
   };
 
   return (
@@ -175,7 +176,7 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
       )}
       <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
         {/* Success Message */}
-        {showSuccessMessage && (
+        {showSuccessMessage && !isHostView && (
           <div className="mb-6 text-center animate-bounce-in">
             <div className="inline-block bg-green-500 text-white px-8 py-4 rounded-xl shadow-2xl text-2xl font-bold">
               ✅ Your vote has been recorded!
@@ -205,18 +206,20 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
         </div>
 
         {/* Vote Again Button - Prominent and Tablet-Friendly */}
-        <div className="mb-8 flex justify-center">
-          <button
-            onClick={handleVoteAgain}
-            className="px-12 py-6 text-3xl md:text-4xl font-bold rounded-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-offset-4 shadow-2xl transform hover:shadow-3xl bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8] text-white"
-            style={{ 
-              minHeight: '80px',
-              minWidth: '300px'
-            }}
-          >
-            🗳️ Vote Again
-          </button>
-        </div>
+        {!isHostView && (
+          <div className="mb-8 flex justify-center">
+            <button
+              onClick={handleVoteAgain}
+              className="px-12 py-6 text-3xl md:text-4xl font-bold rounded-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-offset-4 shadow-2xl transform hover:shadow-3xl bg-gradient-to-r from-[#16a34a] to-[#34d399] hover:from-[#22c55e] hover:to-[#6ee7b7] text-white"
+              style={{ 
+                minHeight: '80px',
+                minWidth: '300px'
+              }}
+            >
+              🗳️ Vote Again
+            </button>
+          </div>
+        )}
 
         {/* Results - single pie chart + grid */}
         <div className="mb-8">
@@ -290,25 +293,27 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false }) => {
         </div>
 
         {/* Auto-Advance Toggle (available in both owner and shared views) */}
-        <div className="mb-6 flex justify-center">
-          <button
-            onClick={toggleAutoAdvance}
-            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 ${
-              autoAdvanceEnabled 
-                ? 'bg-gradient-to-r from-[#18e6c1] to-[#2ef9d8] text-white border-[#18e6c1] shadow-lg' 
-                : 'bg-[#fafaff] text-[#8f4eff] border-[#8f4eff] shadow-md'
-            }`}
-          >
-            {autoAdvanceEnabled ? '⏸️ Pause Auto-Advance' : '▶️ Enable Auto-Advance (3s)'}
-          </button>
-        </div>
+        {!isHostView && (
+          <div className="mb-6 flex justify-center">
+            <button
+              onClick={toggleAutoAdvance}
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 ${
+                autoAdvanceEnabled 
+                ? 'bg-gradient-to-r from-[#34d399] to-[#6ee7b7] text-white border-[#34d399] shadow-lg' 
+                : 'bg-[#fafaff] text-[#16a34a] border-[#16a34a] shadow-md'
+              }`}
+            >
+              {autoAdvanceEnabled ? '⏸️ Pause Auto-Advance' : '▶️ Enable Auto-Advance (3s)'}
+            </button>
+          </div>
+        )}
 
         {/* Action Buttons */}
-        {!isSharedView && (
+        {!isSharedView && !isHostView && (
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => setViewMode('landing')}
-              className="px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 border-[#8f4eff] text-[#8f4eff] bg-[#fafaff] hover:bg-[#f0f0ff] shadow-md"
+              className="px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 border-[#16a34a] text-[#16a34a] bg-[#fafaff] hover:bg-[#eefcf4] shadow-md"
             >
               🏠 Back to Home
             </button>

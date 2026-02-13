@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { usePoll } from '../context/PollContext';
+import { useAuth } from '../context/AuthContext';
 import { subscribeToPollById } from '../utils/firestoreHelpers';
-import PollVoting from './PollVoting';
+import PollResults from './PollResults';
 import type { Poll } from '../types/poll.types';
 
-interface SharedPollViewProps {
+interface HostPollViewProps {
   pollId: string;
 }
 
-const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
-  const { createPoll, state } = usePoll();
+const HostPollView: React.FC<HostPollViewProps> = ({ pollId }) => {
+  const { createPoll, state, setViewMode } = usePoll();
+  const { currentUser, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!pollId) return;
+    if (!pollId || !currentUser) return;
 
     setLoading(true);
     setError(null);
@@ -23,9 +25,13 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
       pollId,
       (savedPoll) => {
         if (!savedPoll) {
-          setError(
-            'Poll not found. The link may be invalid, the poll may have been deleted, or you may not have permission to view it.'
-          );
+          setError('Poll not found or no longer available.');
+          setLoading(false);
+          return;
+        }
+
+        if (savedPoll.userId && savedPoll.userId !== currentUser.uid) {
+          setError('You do not have permission to view this host dashboard.');
           setLoading(false);
           return;
         }
@@ -49,8 +55,8 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
         setLoading(false);
       },
       (err) => {
-        console.error('Error loading poll:', err);
-        setError(err.message || 'Failed to load poll. Please try again.');
+        console.error('Error loading host poll:', err);
+        setError(err.message || 'Failed to load host poll.');
         setLoading(false);
       }
     );
@@ -58,14 +64,34 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
     return () => {
       unsubscribe();
     };
-  }, [pollId, createPoll]);
+  }, [pollId, currentUser, createPoll]);
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-designer-pattern">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#16a34a] mx-auto mb-4"></div>
-          <p className="text-white font-semibold">Loading poll...</p>
+          <p className="text-white font-semibold">Loading host dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-designer-pattern px-4">
+        <div className="max-w-md w-full bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] p-8 border border-[#16a34a]/10">
+          <div className="text-center">
+            <div className="text-5xl mb-4">🔒</div>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-4">Host Login Required</h1>
+            <p className="text-[#4a4a6a] mb-6">Please sign in as the poll owner to view host results.</p>
+            <button
+              onClick={() => setViewMode('login')}
+              className="px-6 py-3 bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white rounded-xl font-bold hover:from-[#22c55e] hover:to-[#6ee7b7] transition-all shadow-lg"
+            >
+              Sign In
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -76,14 +102,14 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
       <div className="min-h-screen flex items-center justify-center bg-designer-pattern px-4">
         <div className="max-w-md w-full bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] p-8 border border-[#16a34a]/10">
           <div className="text-center">
-            <div className="text-6xl mb-4">❌</div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-4">Poll Not Found</h1>
+            <div className="text-6xl mb-4">⚠️</div>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-4">Cannot Open Host Dashboard</h1>
             <p className="text-[#4a4a6a] mb-6">{error}</p>
             <button
-              onClick={() => window.location.href = '/'}
+              onClick={() => setViewMode('workspace')}
               className="px-6 py-3 bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white rounded-xl font-bold hover:from-[#22c55e] hover:to-[#6ee7b7] transition-all shadow-lg"
             >
-              Go to Home
+              Go to My Polls
             </button>
           </div>
         </div>
@@ -91,14 +117,11 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
     );
   }
 
-  // Shared links are voter-only. Keep participants on the voting view,
-  // including after voting (confirmation state handled in PollVoting).
   if (state.currentPoll) {
-    return <PollVoting isSharedView />;
+    return <PollResults isHostView />;
   }
 
   return null;
 };
 
-export default SharedPollView;
-
+export default HostPollView;

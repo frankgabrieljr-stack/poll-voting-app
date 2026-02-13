@@ -50,7 +50,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-designer-pattern px-4">
-      <div className="max-w-md w-full bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] p-8 border border-[#8f4eff]/10">
+      <div className="max-w-md w-full bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] p-8 border border-[#16a34a]/10">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Welcome Back</h1>
           <p className="text-gray-600">Sign in to your account</p>
@@ -80,7 +80,7 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none text-gray-900"
+                className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-green-500 focus:outline-none text-gray-900"
                 placeholder="you@example.com"
                 style={{ color: '#1a1a1a', fontSize: '16px' }}
               />
@@ -97,7 +97,7 @@ const Login: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none text-gray-900"
+                  className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-300 focus:border-green-500 focus:outline-none text-gray-900"
                   placeholder="Enter your password"
                   style={{ color: '#1a1a1a', fontSize: '16px' }}
                 />
@@ -124,7 +124,7 @@ const Login: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowForgotPassword(true)}
-              className="text-sm text-purple-600 hover:text-purple-800 font-semibold"
+              className="text-sm text-green-600 hover:text-green-800 font-semibold"
             >
               Forgot Password?
             </button>
@@ -132,7 +132,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white py-3 rounded-xl font-bold text-lg hover:from-[#a366ff] hover:to-[#2ef9d8] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className="w-full bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white py-3 rounded-xl font-bold text-lg hover:from-[#22c55e] hover:to-[#6ee7b7] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -149,7 +149,7 @@ const Login: React.FC = () => {
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none text-gray-900"
+                className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-green-500 focus:outline-none text-gray-900"
                 placeholder="you@example.com"
                 style={{ color: '#1a1a1a', fontSize: '16px' }}
               />
@@ -170,7 +170,7 @@ const Login: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white py-3 rounded-xl font-bold hover:from-[#a366ff] hover:to-[#2ef9d8] transition-all shadow-lg"
+                className="flex-1 bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white py-3 rounded-xl font-bold hover:from-[#22c55e] hover:to-[#6ee7b7] transition-all shadow-lg"
               >
                 Send Reset Email
               </button>
@@ -183,7 +183,7 @@ const Login: React.FC = () => {
             Don't have an account?{' '}
             <button
               onClick={() => setViewMode('register')}
-              className="text-[#8f4eff] hover:text-[#a366ff] font-semibold"
+              className="text-[#16a34a] hover:text-[#22c55e] font-semibold"
             >
               Sign Up
             </button>

@@ -34,8 +34,8 @@ const LandingPage: React.FC = () => {
   };
 
   const getButtonClasses = () => {
-    // Designer theme: Violet to Teal gradient
-    return 'px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white hover:from-[#a366ff] hover:to-[#2ef9d8] focus:ring-[#8f4eff] shadow-lg';
+    // Designer theme: Green gradient
+    return 'px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white hover:from-[#22c55e] hover:to-[#6ee7b7] focus:ring-[#16a34a] shadow-lg';
   };
 
   const getSecondaryButtonClasses = () => {
@@ -47,11 +47,11 @@ const LandingPage: React.FC = () => {
     <div className={getThemeClasses()}>
       {/* Animated Background Elements - Designer Theme Accents */}
       <div className="absolute inset-0 overflow-hidden z-0">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#18e6c1]/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#8f4eff]/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#ff6363]/8 rounded-full blur-3xl animate-pulse delay-500"></div>
-        <div className="absolute top-20 right-1/4 w-64 h-64 bg-[#18e6c1]/5 rounded-full blur-2xl animate-pulse delay-700"></div>
-        <div className="absolute bottom-20 left-1/4 w-64 h-64 bg-[#8f4eff]/5 rounded-full blur-2xl animate-pulse delay-300"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#34d399]/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#16a34a]/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#22c55e]/8 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute top-20 right-1/4 w-64 h-64 bg-[#34d399]/5 rounded-full blur-2xl animate-pulse delay-700"></div>
+        <div className="absolute bottom-20 left-1/4 w-64 h-64 bg-[#16a34a]/5 rounded-full blur-2xl animate-pulse delay-300"></div>
       </div>
 
       <div className="relative z-10">
@@ -82,7 +82,7 @@ const LandingPage: React.FC = () => {
               <button
                 onClick={() => setViewMode('create')}
                 className={getButtonClasses()}
-                style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+                style={{ background: 'linear-gradient(135deg, #16a34a 0%, #34d399 100%)' }}
               >
                 🚀 Start Creating
               </button>
@@ -99,20 +99,20 @@ const LandingPage: React.FC = () => {
 
             {/* Stats Section */}
             <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="text-center bg-[#fafaff] backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#8f4eff]/10">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#18e6c1] to-[#8f4eff] bg-clip-text text-transparent mb-2">
+              <div className="text-center bg-[#fafaff] backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#16a34a]/10">
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#34d399] to-[#16a34a] bg-clip-text text-transparent mb-2">
                   10K+
                 </div>
                 <div className="text-[#1a1a2e] font-semibold">Polls Created</div>
               </div>
-              <div className="text-center bg-[#fafaff] backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#8f4eff]/10">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#8f4eff] to-[#ff6363] bg-clip-text text-transparent mb-2">
+              <div className="text-center bg-[#fafaff] backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#16a34a]/10">
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#16a34a] to-[#22c55e] bg-clip-text text-transparent mb-2">
                   50K+
                 </div>
                 <div className="text-[#1a1a2e] font-semibold">Votes Cast</div>
               </div>
-              <div className="text-center bg-[#fafaff] backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#8f4eff]/10">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#ff6363] to-[#18e6c1] bg-clip-text text-transparent mb-2">
+              <div className="text-center bg-[#fafaff] backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#16a34a]/10">
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#22c55e] to-[#34d399] bg-clip-text text-transparent mb-2">
                   99.9%
                 </div>
                 <div className="text-[#1a1a2e] font-semibold">Uptime</div>
@@ -128,7 +128,7 @@ const LandingPage: React.FC = () => {
 
         {/* Footer */}
         <footer className="container mx-auto px-6 py-8 text-center">
-          <div className="bg-[#fafaff] backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#8f4eff]/10">
+          <div className="bg-[#fafaff] backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#16a34a]/10">
             <p className="font-semibold text-[#1a1a2e]">Built with ❤️ for modern teams and creators</p>
             <p className="text-sm mt-2 text-[#4a4a6a]">© 2025 PollVote Pro. All rights reserved.</p>
           </div>

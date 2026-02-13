@@ -63,7 +63,7 @@ const Register: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-designer-pattern px-4">
-      <div className="max-w-md w-full bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] p-8 border border-[#8f4eff]/10">
+      <div className="max-w-md w-full bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] p-8 border border-[#16a34a]/10">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Create Account</h1>
           <p className="text-gray-600">Sign up to start creating polls</p>
@@ -86,7 +86,7 @@ const Register: React.FC = () => {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none text-gray-900"
+              className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-green-500 focus:outline-none text-gray-900"
               placeholder="Your Name"
               style={{ color: '#1a1a1a', fontSize: '16px' }}
             />
@@ -102,7 +102,7 @@ const Register: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none text-gray-900"
+              className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-green-500 focus:outline-none text-gray-900"
               placeholder="you@example.com"
               style={{ color: '#1a1a1a', fontSize: '16px' }}
             />
@@ -119,7 +119,7 @@ const Register: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none text-gray-900"
+                className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-300 focus:border-green-500 focus:outline-none text-gray-900"
                 placeholder="At least 8 characters"
                 style={{ color: '#1a1a1a', fontSize: '16px' }}
               />
@@ -155,7 +155,7 @@ const Register: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none text-gray-900"
+                className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-300 focus:border-green-500 focus:outline-none text-gray-900"
                 placeholder="Re-enter your password"
                 style={{ color: '#1a1a1a', fontSize: '16px' }}
               />
@@ -182,7 +182,7 @@ const Register: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white py-3 rounded-xl font-bold text-lg hover:from-[#a366ff] hover:to-[#2ef9d8] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            className="w-full bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white py-3 rounded-xl font-bold text-lg hover:from-[#22c55e] hover:to-[#6ee7b7] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
           >
             {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
@@ -193,7 +193,7 @@ const Register: React.FC = () => {
             Already have an account?{' '}
             <button
               onClick={() => setViewMode('login')}
-              className="text-[#8f4eff] hover:text-[#a366ff] font-semibold"
+              className="text-[#16a34a] hover:text-[#22c55e] font-semibold"
             >
               Sign In
             </button>

@@ -6,7 +6,7 @@ interface PollVotingProps {
   isSharedView?: boolean;
 }
 
-const PollVoting: React.FC<PollVotingProps> = () => {
+const PollVoting: React.FC<PollVotingProps> = ({ isSharedView = false }) => {
   const { state, vote, setViewMode } = usePoll();
   const { state: themeState } = useTheme();
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
@@ -111,11 +111,11 @@ const PollVoting: React.FC<PollVotingProps> = () => {
         baseClasses += ' bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm focus:ring-white/50';
       }
     } else {
-      // Designer theme: White/off-white cards with violet borders
+      // Designer theme: White/off-white cards with green borders
       if (isSelected) {
-        baseClasses += ' bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] text-white shadow-lg';
+        baseClasses += ' bg-gradient-to-r from-[#16a34a] to-[#34d399] text-white shadow-lg';
       } else {
-        baseClasses += ' bg-[#fafaff] hover:bg-[#f0f0ff] text-[#1a1a2e] border-2 border-[#8f4eff]/30 hover:border-[#8f4eff] focus:ring-[#8f4eff] shadow-md';
+        baseClasses += ' bg-[#fafaff] hover:bg-[#eefcf4] text-[#1a1a2e] border-2 border-[#16a34a]/30 hover:border-[#16a34a] focus:ring-[#16a34a] shadow-md';
       }
     }
     
@@ -144,9 +144,11 @@ const PollVoting: React.FC<PollVotingProps> = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">{poll.question}</h1>
           <p className="text-lg md:text-xl text-white font-semibold">
-            {state.hasVoted ? 'Thanks for voting! View results below.' : 'Choose your answer below'}
+            {state.hasVoted
+              ? (isSharedView ? 'Thanks! Your vote has been recorded.' : 'Thanks for voting! View results below.')
+              : 'Choose your answer below'}
           </p>
-          {!state.hasVoted && (
+          {!state.hasVoted && !isSharedView && (
             <p className="text-base md:text-lg text-white/90 mt-2">
               Total votes so far: <span className="font-bold bg-[#fafaff] text-[#1a1a2e] px-3 py-1 rounded-lg inline-block shadow-md">{poll.choices.reduce((sum, choice) => sum + choice.votes, 0)}</span>
             </p>
@@ -165,7 +167,7 @@ const PollVoting: React.FC<PollVotingProps> = () => {
             >
               <div className="flex items-center justify-between">
                 <span className="text-left">{choice.text}</span>
-                {state.hasVoted && (
+                {state.hasVoted && !isSharedView && (
                   <span className="text-sm opacity-75">
                     {choice.votes} vote{choice.votes !== 1 ? 's' : ''}
                   </span>
@@ -176,44 +178,46 @@ const PollVoting: React.FC<PollVotingProps> = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={() => setViewMode('landing')}
-            className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2"
-            style={{ 
-              borderColor: themeState.design.primaryColor,
-              color: themeState.design.primaryColor,
-              backgroundColor: 'transparent'
-            }}
-          >
-            🏠 Back to Home
-          </button>
-          
-          {state.hasVoted && (
+        {!isSharedView && (
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => setViewMode('results')}
-              className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              onClick={() => setViewMode('landing')}
+              className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2"
               style={{ 
-                backgroundColor: themeState.design.primaryColor,
-                color: 'white'
+                borderColor: themeState.design.primaryColor,
+                color: themeState.design.primaryColor,
+                backgroundColor: 'transparent'
               }}
             >
-              View Results
+              🏠 Back to Home
             </button>
-          )}
-          
-          <button
-            onClick={() => setViewMode('create')}
-            className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2"
-            style={{ 
-              borderColor: themeState.design.primaryColor,
-              color: themeState.design.primaryColor,
-              backgroundColor: 'transparent'
-            }}
-          >
-            Create New Poll
-          </button>
-        </div>
+            
+            {state.hasVoted && (
+              <button
+                onClick={() => setViewMode('results')}
+                className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                style={{ 
+                  backgroundColor: themeState.design.primaryColor,
+                  color: 'white'
+                }}
+              >
+                View Results
+              </button>
+            )}
+            
+            <button
+              onClick={() => setViewMode('create')}
+              className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2"
+              style={{ 
+                borderColor: themeState.design.primaryColor,
+                color: themeState.design.primaryColor,
+                backgroundColor: 'transparent'
+              }}
+            >
+              Create New Poll
+            </button>
+          </div>
+        )}
 
         {/* Loading State */}
         {isVoting && (

@@ -57,7 +57,8 @@ export interface StockImage {
     | 'holiday'
     | 'winter'
     | 'vacation'
-    | 'clothes';
+    | 'clothes'
+    | 'food';
   tags: string[];
   alt: string;
   attribution?: string;

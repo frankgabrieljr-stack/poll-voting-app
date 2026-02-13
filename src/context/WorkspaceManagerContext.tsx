@@ -146,7 +146,7 @@ export const WorkspaceManagerProvider: React.FC<{ children: ReactNode }> = ({ ch
       const defaultWorkspace: Omit<Workspace, 'id'> = {
         name: 'My Polls',
         description: 'Default workspace for your polls',
-        color: '#8f4eff',
+        color: '#16a34a',
         icon: '📊',
         createdAt: new Date(),
         lastModified: new Date(),
@@ -176,7 +176,7 @@ export const WorkspaceManagerProvider: React.FC<{ children: ReactNode }> = ({ ch
       const workspace: Omit<Workspace, 'id'> = {
         name,
         description,
-        color: color || '#8f4eff',
+        color: color || '#16a34a',
         icon: icon || '📊',
         createdAt: new Date(),
         lastModified: new Date(),

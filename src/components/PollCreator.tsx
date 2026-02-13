@@ -159,7 +159,7 @@ const PollCreator: React.FC = () => {
 
   const getInputClasses = () => {
     // Designer theme: White/off-white inputs with violet borders
-    return 'w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 text-base bg-[#fafaff] border-[#8f4eff]/20 text-[#1a1a2e] placeholder-[#6a6a8a] focus:border-[#8f4eff] focus:ring-[#8f4eff] shadow-md';
+    return 'w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 text-base bg-[#fafaff] border-[#16a34a]/20 text-[#1a1a2e] placeholder-[#6a6a8a] focus:border-[#16a34a] focus:ring-[#16a34a] shadow-md';
   };
 
   const handleTemplateSelect = (template: typeof designTemplates[0]) => {
@@ -186,7 +186,7 @@ const PollCreator: React.FC = () => {
           <div className="flex justify-center gap-3 mb-4">
             <button
               onClick={() => setViewMode('workspace')}
-              className="px-5 py-3 rounded-xl font-bold text-base transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] shadow-lg border border-[#8f4eff]/20 text-[#1a1a2e] hover:shadow-xl"
+              className="px-5 py-3 rounded-xl font-bold text-base transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] shadow-lg border border-[#16a34a]/20 text-[#1a1a2e] hover:shadow-xl"
               style={{ 
                 borderColor: themeState.design.primaryColor,
               }}
@@ -198,7 +198,7 @@ const PollCreator: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('landing')}
-              className="px-5 py-3 rounded-xl font-bold text-base transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] shadow-lg border border-[#8f4eff]/20 text-[#1a1a2e] hover:shadow-xl"
+              className="px-5 py-3 rounded-xl font-bold text-base transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-offset-2 bg-[#fafaff] shadow-lg border border-[#16a34a]/20 text-[#1a1a2e] hover:shadow-xl"
               style={{ 
                 borderColor: themeState.design.primaryColor,
               }}
@@ -216,12 +216,12 @@ const PollCreator: React.FC = () => {
         {/* Templates Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Templates Panel */}
-          <div className="bg-[#fafaff] rounded-2xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] border border-[#8f4eff]/10 p-6">
+          <div className="bg-[#fafaff] rounded-2xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] border border-[#16a34a]/10 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-[#1a1a2e]">Templates</h2>
               <button
                 onClick={() => setShowTemplates(!showTemplates)}
-                className="px-4 py-2 rounded-lg font-bold text-sm transition-all duration-200 hover:scale-105 bg-[#fafaff] border border-[#8f4eff]/20 text-[#1a1a2e] shadow-lg"
+                className="px-4 py-2 rounded-lg font-bold text-sm transition-all duration-200 hover:scale-105 bg-[#fafaff] border border-[#16a34a]/20 text-[#1a1a2e] shadow-lg"
                 style={{ borderColor: themeState.design.primaryColor }}
                 title="Open template options"
               >
@@ -241,7 +241,7 @@ const PollCreator: React.FC = () => {
                       <div
                         key={template.id}
                         onClick={() => handleTemplateSelect(template)}
-                        className="p-4 rounded-lg border-2 border-[#8f4eff]/20 hover:border-[#8f4eff] cursor-pointer transition-all duration-200 hover:scale-105 bg-[#fafaff] shadow-md"
+                        className="p-4 rounded-lg border-2 border-[#16a34a]/20 hover:border-[#16a34a] cursor-pointer transition-all duration-200 hover:scale-105 bg-[#fafaff] shadow-md"
                         title={`Use ${template.name} template`}
                       >
                         <div className="flex items-center space-x-3">
@@ -266,12 +266,12 @@ const PollCreator: React.FC = () => {
           </div>
 
           {/* Advanced Templates Panel */}
-          <div className="bg-[#fafaff] rounded-2xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] border border-[#8f4eff]/10 p-6">
+          <div className="bg-[#fafaff] rounded-2xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] border border-[#16a34a]/10 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-gray-900">Advanced Templates</h2>
               <button
                 onClick={() => setShowAdvancedTemplates(!showAdvancedTemplates)}
-                className="px-4 py-2 rounded-lg font-bold text-sm transition-all duration-200 hover:scale-105 bg-[#fafaff] border border-[#8f4eff]/20 text-[#1a1a2e] shadow-lg"
+                className="px-4 py-2 rounded-lg font-bold text-sm transition-all duration-200 hover:scale-105 bg-[#fafaff] border border-[#16a34a]/20 text-[#1a1a2e] shadow-lg"
                 style={{ borderColor: themeState.design.primaryColor }}
                 title="Open advanced template options"
               >
@@ -291,7 +291,7 @@ const PollCreator: React.FC = () => {
                       <div
                         key={template.id}
                         onClick={() => handleTemplateSelect(template)}
-                        className="p-4 rounded-lg border-2 border-[#8f4eff]/20 hover:border-[#8f4eff] cursor-pointer transition-all duration-200 hover:scale-105 bg-[#fafaff] shadow-md"
+                        className="p-4 rounded-lg border-2 border-[#16a34a]/20 hover:border-[#16a34a] cursor-pointer transition-all duration-200 hover:scale-105 bg-[#fafaff] shadow-md"
                         title={`Use ${template.name} template`}
                       >
                         <div className="flex items-center space-x-3">
@@ -317,7 +317,7 @@ const PollCreator: React.FC = () => {
         </div>
 
         {/* Poll Creation Form */}
-        <div className="bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] border border-[#8f4eff]/10 p-6">
+        <div className="bg-[#fafaff] rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] border border-[#16a34a]/10 p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
           {/* Question Input */}
           <div>
@@ -353,7 +353,7 @@ const PollCreator: React.FC = () => {
             <div className="space-y-4 max-h-96 overflow-y-auto pr-1">
               {choices.map((choice, index) => (
                 <div key={index} className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-[#fafaff] rounded-full flex items-center justify-center font-bold text-[#1a1a2e] shadow-lg border border-[#8f4eff]/20"
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#fafaff] rounded-full flex items-center justify-center font-bold text-[#1a1a2e] shadow-lg border border-[#16a34a]/20"
                        style={{ borderColor: themeState.design.primaryColor }}>
                     {index + 1}
                   </div>
@@ -394,7 +394,7 @@ const PollCreator: React.FC = () => {
           <button
             type="button"
             onClick={addChoice}
-            className="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 border-4 bg-[#fafaff] shadow-xl border-[#8f4eff] text-[#8f4eff]"
+            className="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 border-4 bg-[#fafaff] shadow-xl border-[#16a34a] text-[#16a34a]"
             style={{
               boxShadow: `0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 4px ${themeState.design.primaryColor}40`
             }}
@@ -408,7 +408,7 @@ const PollCreator: React.FC = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-4 px-6 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 text-white shadow-xl bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8]"
+            className="w-full py-4 px-6 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-offset-2 text-white shadow-xl bg-gradient-to-r from-[#16a34a] to-[#34d399] hover:from-[#22c55e] hover:to-[#6ee7b7]"
           >
             <span className="flex items-center justify-center space-x-2">
               <span>🚀</span>

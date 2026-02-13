@@ -15,6 +15,7 @@ const AdvancedDesignOptions: React.FC = () => {
   const [selectedPaletteCategory, setSelectedPaletteCategory] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
   const [showAllImagesModal, setShowAllImagesModal] = useState(false);
+  const quickImageFilters = ['all', 'food', 'holiday', 'winter', 'vacation', 'clothes', 'business', 'lifestyle'];
 
   // Sync selected image with saved background image from theme state
   useEffect(() => {
@@ -395,7 +396,7 @@ const AdvancedDesignOptions: React.FC = () => {
                 type="text"
                 value={imageSearchTerm}
                 onChange={(e) => setImageSearchTerm(e.target.value)}
-                placeholder="Try: Christmas, holiday, winter, party, vacation, clothes, sweater..."
+                placeholder="Try: Christmas, holiday, winter, party, vacation, clothes, chili, chili contest..."
                 className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               />
             </div>
@@ -427,6 +428,41 @@ const AdvancedDesignOptions: React.FC = () => {
                     🗑️ Clear Image
                   </button>
                 )}
+              </div>
+            </div>
+
+            {/* Quick one-click chips for common themed polls */}
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Quick filters:</label>
+              <div className="flex flex-wrap gap-2">
+                {quickImageFilters
+                  .filter((theme) => theme === 'all' || availableThemes.includes(theme))
+                  .map((theme) => (
+                    <button
+                      key={`quick-${theme}`}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTheme(theme);
+                        if (theme === 'food') {
+                          setImageSearchTerm('chili');
+                        } else if (imageSearchTerm === 'chili') {
+                          setImageSearchTerm('');
+                        }
+                      }}
+                      className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                        selectedTheme === theme
+                          ? 'bg-green-600 text-white shadow-lg'
+                          : 'bg-green-50 text-green-800 hover:bg-green-100 border border-green-200'
+                      }`}
+                      title={`Quick filter for ${theme}`}
+                    >
+                      {theme === 'all'
+                        ? '✨ All'
+                        : theme === 'food'
+                          ? '🌶️ Food / Chili'
+                          : `${theme.charAt(0).toUpperCase()}${theme.slice(1)}`}
+                    </button>
+                  ))}
               </div>
             </div>
 
@@ -467,7 +503,7 @@ const AdvancedDesignOptions: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setShowAllImagesModal(true)}
-                      className="inline-flex items-center px-4 py-2 rounded-lg font-semibold text-sm bg-[#fafaff] text-[#1a1a2e] border border-[#8f4eff]/40 shadow-md hover:bg-[#f0f0ff] hover:scale-105 transition-all duration-200"
+                      className="inline-flex items-center px-4 py-2 rounded-lg font-semibold text-sm bg-[#fafaff] text-[#1a1a2e] border border-[#16a34a]/40 shadow-md hover:bg-[#eefcf4] hover:scale-105 transition-all duration-200"
                     >
                       View all {filteredImages.length} images
                     </button>
@@ -478,7 +514,7 @@ const AdvancedDesignOptions: React.FC = () => {
               <div className="text-center py-12 bg-gray-50 rounded-lg">
                 <div className="text-5xl mb-4">🔍</div>
                 <p className="text-lg font-semibold text-gray-700">No images found—try typing a different word.</p>
-                <p className="text-sm text-gray-600 mt-2">Try: Christmas, holiday, winter, party, vacation, clothes, or sweater</p>
+                <p className="text-sm text-gray-600 mt-2">Try: Christmas, holiday, winter, party, vacation, clothes, chili, or chili contest</p>
               </div>
             )}
           </div>

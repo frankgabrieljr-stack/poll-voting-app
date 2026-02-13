@@ -15,7 +15,7 @@ type ThemeAction =
 
 const defaultDesign: DesignOptions = {
   theme: 'designer', // New designer theme
-  primaryColor: '#8f4eff', // Violet as primary
+  primaryColor: '#16a34a', // Green as primary
   fontStyle: 'sans',
   layout: 'card',
 };

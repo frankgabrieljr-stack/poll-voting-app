@@ -16,8 +16,8 @@ const FeatureTile: React.FC<FeatureTileProps> = ({ feature, isActive, onClick })
       onClick={onClick}
       className={`p-6 rounded-2xl transition-all duration-500 hover:scale-105 hover:shadow-2xl cursor-pointer ${
         isActive
-          ? 'bg-gradient-to-br from-[#8f4eff] to-[#18e6c1] text-white shadow-2xl scale-105'
-          : 'bg-[#fafaff] backdrop-blur-sm border border-[#8f4eff]/20 text-[#1a1a2e] shadow-lg hover:border-[#8f4eff]'
+          ? 'bg-gradient-to-br from-[#16a34a] to-[#34d399] text-white shadow-2xl scale-105'
+          : 'bg-[#fafaff] backdrop-blur-sm border border-[#16a34a]/20 text-[#1a1a2e] shadow-lg hover:border-[#16a34a]'
       }`}
     >
       <div className="text-4xl mb-4">{feature.icon}</div>
@@ -32,7 +32,7 @@ const FeatureTile: React.FC<FeatureTileProps> = ({ feature, isActive, onClick })
         {feature.description}
       </p>
       <div className={`mt-4 text-sm font-semibold ${
-        isActive ? 'text-white/80' : 'text-[#8f4eff]'
+        isActive ? 'text-white/80' : 'text-[#16a34a]'
       }`}>
         Click to see example →
       </div>

@@ -53,7 +53,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
       baseClasses += 'bg-white/20 backdrop-blur-sm border-white/30';
     } else {
       // New designer theme: Navy with violet accent
-      baseClasses += 'bg-[#22243a] border-[#8f4eff]/30 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]';
+      baseClasses += 'bg-[#22243a] border-[#16a34a]/30 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]';
     }
     
     return baseClasses;
@@ -73,7 +73,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
       baseClasses += 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm focus:ring-white/50';
     } else {
       // New designer theme: Gradient buttons with accent colors
-      baseClasses += 'bg-gradient-to-r from-[#8f4eff] to-[#18e6c1] hover:from-[#a366ff] hover:to-[#2ef9d8] text-white focus:ring-[#8f4eff] shadow-lg';
+      baseClasses += 'bg-gradient-to-r from-[#16a34a] to-[#34d399] hover:from-[#22c55e] hover:to-[#6ee7b7] text-white focus:ring-[#16a34a] shadow-lg';
     }
     
     return baseClasses;
@@ -163,7 +163,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
     <header className={headerClasses}>
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-[#18e6c1] to-[#8f4eff] bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-[#34d399] to-[#16a34a] bg-clip-text text-transparent">
             Poll App
           </h1>
           {pageTitle && (
@@ -180,14 +180,14 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
               <div className="relative user-menu-container">
                 <button
                   onClick={handleToggleMenu}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#8f4eff]/20 to-[#18e6c1]/20 backdrop-blur-sm hover:from-[#8f4eff]/30 hover:to-[#18e6c1]/30 border border-[#8f4eff]/30 transition-all focus:outline-none focus:ring-2 focus:ring-[#8f4eff] cursor-pointer pointer-events-auto shadow-md"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#16a34a]/20 to-[#34d399]/20 backdrop-blur-sm hover:from-[#16a34a]/30 hover:to-[#34d399]/30 border border-[#16a34a]/30 transition-all focus:outline-none focus:ring-2 focus:ring-[#16a34a] cursor-pointer pointer-events-auto shadow-md"
                   type="button"
                 >
                   <span className="text-white font-semibold">
                     {userDisplayName}
                   </span>
                   {userData?.role === 'admin' && (
-                    <span className="px-2 py-1 bg-gradient-to-r from-[#ff6363] to-[#ff8a8a] text-white text-xs font-bold rounded-lg shadow-sm">
+                    <span className="px-2 py-1 bg-gradient-to-r from-[#15803d] to-[#34d399] text-white text-xs font-bold rounded-lg shadow-sm">
                       ADMIN
                     </span>
                   )}
@@ -195,9 +195,9 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
                 </button>
                 
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-56 bg-[#fafaff] rounded-xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] z-[100] border border-[#8f4eff]/20 overflow-hidden">
+                  <div className="absolute right-0 mt-2 w-56 bg-[#fafaff] rounded-xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] z-[100] border border-[#16a34a]/20 overflow-hidden">
                     <div className="py-2">
-                      <div className="px-4 py-2 border-b border-[#8f4eff]/10 bg-gradient-to-r from-[#8f4eff]/5 to-[#18e6c1]/5">
+                      <div className="px-4 py-2 border-b border-[#16a34a]/10 bg-gradient-to-r from-[#16a34a]/5 to-[#34d399]/5">
                         <p className="text-sm font-semibold text-[#1a1a2e]">
                           {userDisplayName}
                         </p>
@@ -208,7 +208,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
                       
                       <button
                         onClick={() => handleNavigate('workspace')}
-                        className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#8f4eff]/10 hover:to-[#18e6c1]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
+                        className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#16a34a]/10 hover:to-[#34d399]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
                         type="button"
                       >
                         <span>📊</span>
@@ -217,7 +217,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
                       
                       <button
                         onClick={() => handleNavigate('settings')}
-                        className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#8f4eff]/10 hover:to-[#18e6c1]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
+                        className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#16a34a]/10 hover:to-[#34d399]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
                         type="button"
                       >
                         <span>⚙️</span>
@@ -227,7 +227,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
                       {userData?.role === 'admin' && (
                         <button
                           onClick={() => handleNavigate('admin')}
-                          className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#8f4eff]/10 hover:to-[#18e6c1]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
+                          className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-[#16a34a]/10 hover:to-[#34d399]/10 text-[#1a1a2e] transition-colors flex items-center space-x-2 rounded-lg mx-2 my-1"
                           type="button"
                         >
                           <span>👑</span>
@@ -242,7 +242,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSaveClick }) => {
               {/* Always-visible Log Out button so users can sign out even if the menu has issues */}
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-[#ff6363] to-[#ff8a8a] text-white shadow-md"
+                className="px-4 py-2 rounded-xl font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-[#374151] to-[#6b7280] text-white shadow-md"
                 type="button"
                 title="Log out of your account"
               >

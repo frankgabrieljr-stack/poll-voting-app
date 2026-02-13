@@ -43,7 +43,7 @@ export interface ExportData {
   percentage: number;
 }
 
-export type ViewMode = 'landing' | 'create' | 'vote' | 'results' | 'workspace' | 'login' | 'register' | 'settings' | 'admin' | 'shared-poll';
+export type ViewMode = 'landing' | 'create' | 'vote' | 'results' | 'workspace' | 'login' | 'register' | 'settings' | 'admin' | 'shared-poll' | 'host-poll';
 
 export interface SavedPoll {
   id: string;
