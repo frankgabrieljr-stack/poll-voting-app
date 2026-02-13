@@ -25,7 +25,7 @@ const PollResults: React.FC<PollResultsProps> = ({ isSharedView = false, isHostV
     : null;
 
   // Data for single pie chart + grid
-  const chartColors = ['#16a34a', '#34d399', '#84cc16', '#22c55e', '#10b981', '#65a30d', '#15803d', '#4ade80'];
+  const chartColors = ['#16a34a', '#f97316', '#3b82f6', '#ec4899', '#f59e0b', '#8b5cf6', '#14b8a6', '#ef4444'];
   const chartData = poll.choices.map((choice, index) => {
     const result = results.results.find(r => r.choice === choice.text);
     const percentage = result?.percentage || 0;
