@@ -136,6 +136,123 @@ export const colorPalettes: ColorPalette[] = [
       text: '#f9fafb'
     },
     description: 'Dark theme for modern polls'
+  },
+  {
+    id: 'electric-neon',
+    name: 'Electric Neon',
+    category: 'neon',
+    colors: {
+      primary: '#00F5FF',
+      secondary: '#00C2FF',
+      accent: '#D946EF',
+      background: '#0b1020',
+      text: '#E6F7FF'
+    },
+    description: 'High-energy neon tones for bold polls'
+  },
+  {
+    id: 'lime-pop',
+    name: 'Lime Pop',
+    category: 'neon',
+    colors: {
+      primary: '#84CC16',
+      secondary: '#65A30D',
+      accent: '#F43F5E',
+      background: '#F7FEE7',
+      text: '#3F6212'
+    },
+    description: 'Bright lime with punchy accent colors'
+  },
+  {
+    id: 'tropical-breeze',
+    name: 'Tropical Breeze',
+    category: 'tropical',
+    colors: {
+      primary: '#06B6D4',
+      secondary: '#14B8A6',
+      accent: '#F59E0B',
+      background: '#ECFEFF',
+      text: '#134E4A'
+    },
+    description: 'Fresh cyan-teal palette with sunny accents'
+  },
+  {
+    id: 'mango-coral',
+    name: 'Mango Coral',
+    category: 'tropical',
+    colors: {
+      primary: '#FB7185',
+      secondary: '#F97316',
+      accent: '#FACC15',
+      background: '#FFF7ED',
+      text: '#9A3412'
+    },
+    description: 'Warm tropical tones inspired by sunset fruit'
+  },
+  {
+    id: 'sunset-glow',
+    name: 'Sunset Glow',
+    category: 'sunset',
+    colors: {
+      primary: '#F43F5E',
+      secondary: '#F97316',
+      accent: '#8B5CF6',
+      background: '#FFF1F2',
+      text: '#881337'
+    },
+    description: 'Glowing sunset hues for eye-catching polls'
+  },
+  {
+    id: 'twilight-horizon',
+    name: 'Twilight Horizon',
+    category: 'sunset',
+    colors: {
+      primary: '#6366F1',
+      secondary: '#8B5CF6',
+      accent: '#F472B6',
+      background: '#EEF2FF',
+      text: '#312E81'
+    },
+    description: 'Soft twilight gradients with bright highlights'
+  },
+  {
+    id: 'candy-bright',
+    name: 'Candy Bright',
+    category: 'vibrant',
+    colors: {
+      primary: '#EC4899',
+      secondary: '#8B5CF6',
+      accent: '#22D3EE',
+      background: '#FDF2F8',
+      text: '#831843'
+    },
+    description: 'Bright candy-like colors with playful contrast'
+  },
+  {
+    id: 'skyline-blue',
+    name: 'Skyline Blue',
+    category: 'creative',
+    colors: {
+      primary: '#3B82F6',
+      secondary: '#2563EB',
+      accent: '#06B6D4',
+      background: '#EFF6FF',
+      text: '#1E3A8A'
+    },
+    description: 'Bright blues for clean, modern presentations'
+  },
+  {
+    id: 'mint-bubblegum',
+    name: 'Mint Bubblegum',
+    category: 'pastel',
+    colors: {
+      primary: '#2DD4BF',
+      secondary: '#14B8A6',
+      accent: '#F472B6',
+      background: '#F0FDFA',
+      text: '#134E4A'
+    },
+    description: 'Soft but lively mint-and-pink pastel palette'
   }
 ];
 

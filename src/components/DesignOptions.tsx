@@ -3,6 +3,18 @@ import { useTheme } from '../context/ThemeContext';
 
 const DesignOptions: React.FC = () => {
   const { state, setTheme, setPrimaryColor, setFontStyle, setLayout } = useTheme();
+  const quickColors = [
+    '#8f4eff',
+    '#22d3ee',
+    '#f97316',
+    '#ec4899',
+    '#84cc16',
+    '#06b6d4',
+    '#f43f5e',
+    '#6366f1',
+    '#14b8a6',
+    '#f59e0b',
+  ];
 
   const getThemeClasses = () => {
     const { theme, fontStyle } = state.design;
@@ -118,6 +130,25 @@ const DesignOptions: React.FC = () => {
               className="flex-1 px-3 py-2 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="#3b82f6"
             />
+          </div>
+          <div className="mt-3">
+            <p className="text-xs font-semibold mb-2 opacity-80">Quick bright picks</p>
+            <div className="flex flex-wrap gap-2">
+              {quickColors.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setPrimaryColor(color)}
+                  className={`w-8 h-8 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
+                    state.design.primaryColor.toLowerCase() === color.toLowerCase()
+                      ? 'border-black shadow-lg'
+                      : 'border-white/60'
+                  }`}
+                  style={{ backgroundColor: color }}
+                  title={`Use ${color}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
 

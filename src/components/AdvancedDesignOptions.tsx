@@ -12,6 +12,7 @@ const AdvancedDesignOptions: React.FC = () => {
   const [customImage, setCustomImage] = useState<string | null>(null);
   const [imageSearchTerm, setImageSearchTerm] = useState('');
   const [selectedTheme, setSelectedTheme] = useState<string>('all');
+  const [selectedPaletteCategory, setSelectedPaletteCategory] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
   const [showAllImagesModal, setShowAllImagesModal] = useState(false);
 
@@ -58,6 +59,19 @@ const AdvancedDesignOptions: React.FC = () => {
     const themes = Array.from(new Set(stockImages.map(img => img.category)));
     return ['all', ...themes];
   }, []);
+
+  // Filter palettes by category for easier browsing with larger catalogs
+  const availablePaletteCategories = useMemo(() => {
+    const categories = Array.from(new Set(colorPalettes.map(p => p.category)));
+    return ['all', ...categories];
+  }, []);
+
+  const filteredPalettes = useMemo(() => {
+    if (selectedPaletteCategory === 'all') {
+      return colorPalettes;
+    }
+    return colorPalettes.filter((palette) => palette.category === selectedPaletteCategory);
+  }, [selectedPaletteCategory]);
 
   const handleTemplateSelect = (template: DesignTemplate) => {
     setIsLoading(true);
@@ -299,9 +313,28 @@ const AdvancedDesignOptions: React.FC = () => {
       {activeTab === 'colors' && !isLoading && (
         <div className="space-y-6">
           <h4 className="text-lg font-bold text-gray-900">Pick a Color Scheme</h4>
-          {colorPalettes.length > 0 ? (
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Filter by palette style:</label>
+            <div className="flex flex-wrap gap-2">
+              {availablePaletteCategories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedPaletteCategory(category)}
+                  className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                    selectedPaletteCategory === category
+                      ? 'bg-blue-500 text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  title={`Show ${category === 'all' ? 'all' : category} palettes`}
+                >
+                  {category === 'all' ? '✨ All' : category.charAt(0).toUpperCase() + category.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          {filteredPalettes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {colorPalettes.map((palette) => (
+              {filteredPalettes.map((palette) => (
                 <div
                   key={palette.id}
                   className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 hover:scale-105 ${
@@ -340,8 +373,8 @@ const AdvancedDesignOptions: React.FC = () => {
           ) : (
             <div className="text-center py-8 bg-gray-50 rounded-lg">
               <div className="text-4xl mb-3">🎨</div>
-              <p className="text-lg font-semibold text-gray-700">No color options found</p>
-              <p className="text-sm text-gray-600 mt-2">Try refreshing the page</p>
+              <p className="text-lg font-semibold text-gray-700">No palettes found for this style</p>
+              <p className="text-sm text-gray-600 mt-2">Try a different palette style filter</p>
             </div>
           )}
         </div>

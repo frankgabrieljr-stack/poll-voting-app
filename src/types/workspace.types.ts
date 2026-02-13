@@ -32,7 +32,7 @@ export interface DesignTemplate {
 export interface ColorPalette {
   id: string;
   name: string;
-  category: 'professional' | 'creative' | 'minimal' | 'vibrant' | 'pastel';
+  category: 'professional' | 'creative' | 'minimal' | 'vibrant' | 'pastel' | 'neon' | 'tropical' | 'sunset';
   colors: {
     primary: string;
     secondary: string;
