@@ -502,85 +502,85 @@ export const stockImages: StockImage[] = [
   },
   {
     id: 'holiday-ugly-sweater-party',
-    url: 'https://source.unsplash.com/featured/800x600?ugly-sweater,holiday-party&sig=201',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?ugly-sweater,holiday-party&sig=201',
+    url: 'https://images.pexels.com/photos/1618906/pexels-photo-1618906.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/1618906/pexels-photo-1618906.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'holiday',
     tags: ['ugly sweater', 'ugly-sweater', 'christmas sweater', 'holiday', 'party', 'clothes', 'winter'],
     alt: 'Friends wearing Christmas ugly sweaters at a party',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   // Food / Chili contest theme
   {
     id: 'food-chili-bowl',
-    url: 'https://source.unsplash.com/featured/800x600?chili,bowl,food&sig=301',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?chili,bowl,food&sig=301',
+    url: 'https://images.pexels.com/photos/5792476/pexels-photo-5792476.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/5792476/pexels-photo-5792476.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'food',
     tags: ['food', 'chili', 'chili contest', 'spicy', 'bowl', 'cooking'],
     alt: 'Bowl of chili with toppings',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   {
     id: 'food-chili-cookoff',
-    url: 'https://source.unsplash.com/featured/800x600?chili,cookoff,competition&sig=302',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?chili,cookoff,competition&sig=302',
+    url: 'https://images.pexels.com/photos/5737247/pexels-photo-5737247.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/5737247/pexels-photo-5737247.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'food',
     tags: ['chili', 'cookoff', 'contest', 'competition', 'food challenge'],
     alt: 'Chili cookoff setup with multiple pots',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   {
     id: 'food-spicy-peppers',
-    url: 'https://source.unsplash.com/featured/800x600?hot-peppers,chili,spicy&sig=303',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?hot-peppers,chili,spicy&sig=303',
+    url: 'https://images.pexels.com/photos/18806335/pexels-photo-18806335.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/18806335/pexels-photo-18806335.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'food',
     tags: ['peppers', 'chili peppers', 'spicy', 'heat challenge', 'food'],
     alt: 'Fresh hot chili peppers',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   {
     id: 'food-chili-toppings',
-    url: 'https://source.unsplash.com/featured/800x600?chili,toppings,cheese&sig=304',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?chili,toppings,cheese&sig=304',
+    url: 'https://images.pexels.com/photos/5792430/pexels-photo-5792430.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/5792430/pexels-photo-5792430.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'food',
     tags: ['chili', 'toppings', 'cheese', 'sour cream', 'food contest'],
     alt: 'Chili bowl with cheese and toppings',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   {
     id: 'food-cast-iron-chili',
-    url: 'https://source.unsplash.com/featured/800x600?cast-iron,chili,stew&sig=305',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?cast-iron,chili,stew&sig=305',
+    url: 'https://images.pexels.com/photos/5792419/pexels-photo-5792419.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/5792419/pexels-photo-5792419.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'food',
     tags: ['chili', 'cast iron', 'stew', 'cookoff', 'comfort food'],
     alt: 'Cast-iron pot of chili simmering',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   {
     id: 'food-spice-challenge',
-    url: 'https://source.unsplash.com/featured/800x600?spicy,food,challenge&sig=306',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?spicy,food,challenge&sig=306',
+    url: 'https://images.pexels.com/photos/11318049/pexels-photo-11318049.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/11318049/pexels-photo-11318049.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'food',
     tags: ['spicy challenge', 'heat', 'chili', 'food challenge', 'contest'],
     alt: 'Spicy food challenge scene',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   {
     id: 'food-chili-table',
-    url: 'https://source.unsplash.com/featured/800x600?chili,table,festival&sig=307',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?chili,table,festival&sig=307',
+    url: 'https://images.pexels.com/photos/11318047/pexels-photo-11318047.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/11318047/pexels-photo-11318047.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'food',
     tags: ['chili festival', 'contest table', 'community', 'food event'],
     alt: 'Food festival table featuring chili dishes',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   {
     id: 'food-red-chili-closeup',
-    url: 'https://source.unsplash.com/featured/800x600?red-chili,pepper,macro&sig=308',
-    thumbnail: 'https://source.unsplash.com/featured/200x150?red-chili,pepper,macro&sig=308',
+    url: 'https://images.pexels.com/photos/2133940/pexels-photo-2133940.jpeg?auto=compress&cs=tinysrgb&w=800',
+    thumbnail: 'https://images.pexels.com/photos/2133940/pexels-photo-2133940.jpeg?auto=compress&cs=tinysrgb&w=200',
     category: 'food',
     tags: ['red chili', 'pepper', 'spice', 'heat', 'food'],
     alt: 'Close-up of red chili peppers',
-    attribution: 'Unsplash Source'
+    attribution: 'Pexels'
   },
   // Abstract/Minimal theme
   {
