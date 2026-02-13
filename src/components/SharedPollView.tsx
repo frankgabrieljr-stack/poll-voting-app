@@ -36,6 +36,7 @@ const SharedPollView: React.FC<SharedPollViewProps> = ({ pollId }) => {
           question: savedPoll.question,
           choices: savedPoll.choices || [],
           createdAt: savedPoll.createdAt,
+          lastUpdatedAt: savedPoll.lastModified,
           design: {
             ...savedPoll.design,
             backgroundImage: savedPoll.backgroundImage,
