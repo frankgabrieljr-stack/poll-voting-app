@@ -1,6 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { designTemplates, colorPalettes, stockImages } from '../data/designTemplates';
+import {
+  designTemplates,
+  colorPalettes,
+  stockImages,
+  findStockImageByUrl,
+  normalizeStockImageUrl,
+} from '../data/designTemplates';
 import { DesignTemplate, ColorPalette, StockImage } from '../types/workspace.types';
 
 const AdvancedDesignOptions: React.FC = () => {
@@ -19,19 +25,37 @@ const AdvancedDesignOptions: React.FC = () => {
 
   // Sync selected image with saved background image from theme state
   useEffect(() => {
-    if (state.design.backgroundImage) {
-      // Check if it's a stock image URL
-      const matchingStockImage = stockImages.find(img => img.url === state.design.backgroundImage);
-      if (matchingStockImage) {
-        setSelectedImage(matchingStockImage);
-        setCustomImage(null);
-      } else if (state.design.backgroundImage.startsWith('data:')) {
-        // It's a custom uploaded image
-        setCustomImage(state.design.backgroundImage);
-        setSelectedImage(null);
-      }
+    const savedBackgroundImage = state.design.backgroundImage;
+    if (!savedBackgroundImage) {
+      setSelectedImage(null);
+      setCustomImage(null);
+      return;
     }
-  }, [state.design.backgroundImage]);
+
+    // Heal previously persisted URLs if they point to legacy entries.
+    const normalizedUrl = normalizeStockImageUrl(savedBackgroundImage);
+    if (normalizedUrl && normalizedUrl !== savedBackgroundImage) {
+      setBackgroundImage(normalizedUrl);
+    }
+
+    const matchingStockImage = findStockImageByUrl(savedBackgroundImage);
+    if (matchingStockImage) {
+      setSelectedImage(matchingStockImage);
+      setCustomImage(null);
+      return;
+    }
+
+    if (savedBackgroundImage.startsWith('data:')) {
+      // It's a custom uploaded image.
+      setCustomImage(savedBackgroundImage);
+      setSelectedImage(null);
+      return;
+    }
+
+    // Unknown non-data URL: keep it for preview fallback, but clear stock/custom selection.
+    setSelectedImage(null);
+    setCustomImage(null);
+  }, [state.design.backgroundImage, setBackgroundImage]);
 
   // Filter images by search term and theme
   const filteredImages = useMemo(() => {
@@ -215,7 +239,8 @@ const AdvancedDesignOptions: React.FC = () => {
   };
 
   // Use the saved background image from theme state, or fall back to selected/custom
-  const selectedImageUrl = state.design.backgroundImage || selectedImage?.url || customImage;
+  const selectedImageUrl =
+    normalizeStockImageUrl(state.design.backgroundImage) || selectedImage?.url || customImage;
 
   return (
     <div className={getThemeClasses()}>

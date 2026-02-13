@@ -615,6 +615,40 @@ export const getStockImagesByCategory = (category: string) => {
   return stockImages.filter(image => image.category === category);
 };
 
+// Backward compatibility for previously saved dynamic source.unsplash.com links.
+// These were temporarily used for themed images and may still exist in saved
+// poll designs or localStorage values.
+const legacyStockImageUrlMap: Record<string, string> = {
+  'https://source.unsplash.com/featured/800x600?ugly-sweater,holiday-party&sig=201':
+    'https://images.pexels.com/photos/1618906/pexels-photo-1618906.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://source.unsplash.com/featured/800x600?chili,bowl,food&sig=301':
+    'https://images.pexels.com/photos/5792476/pexels-photo-5792476.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://source.unsplash.com/featured/800x600?chili,cookoff,competition&sig=302':
+    'https://images.pexels.com/photos/5737247/pexels-photo-5737247.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://source.unsplash.com/featured/800x600?hot-peppers,chili,spicy&sig=303':
+    'https://images.pexels.com/photos/18806335/pexels-photo-18806335.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://source.unsplash.com/featured/800x600?chili,toppings,cheese&sig=304':
+    'https://images.pexels.com/photos/5792430/pexels-photo-5792430.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://source.unsplash.com/featured/800x600?cast-iron,chili,stew&sig=305':
+    'https://images.pexels.com/photos/5792419/pexels-photo-5792419.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://source.unsplash.com/featured/800x600?spicy,food,challenge&sig=306':
+    'https://images.pexels.com/photos/11318049/pexels-photo-11318049.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://source.unsplash.com/featured/800x600?chili,table,festival&sig=307':
+    'https://images.pexels.com/photos/11318047/pexels-photo-11318047.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://source.unsplash.com/featured/800x600?red-chili,pepper,macro&sig=308':
+    'https://images.pexels.com/photos/2133940/pexels-photo-2133940.jpeg?auto=compress&cs=tinysrgb&w=800',
+};
+
+export const normalizeStockImageUrl = (url?: string): string | undefined => {
+  if (!url) return url;
+  return legacyStockImageUrlMap[url] || url;
+};
+
+export const findStockImageByUrl = (url?: string): StockImage | undefined => {
+  if (!url) return undefined;
+  const normalizedUrl = normalizeStockImageUrl(url);
+  return stockImages.find((img) => img.url === normalizedUrl);
+};
 
 
 
